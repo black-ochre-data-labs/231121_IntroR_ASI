@@ -74,7 +74,7 @@ knitr:
 
 ## Create an R Project
 
-(This won't work for those in the posit cloud)
+(This won't work for those using the posit cloud)
 
 1. `File` > `New Project` > `Existing Directory` >
     + Browse to `Documents/R_Training`

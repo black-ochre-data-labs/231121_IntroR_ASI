@@ -6,6 +6,11 @@ University of Western Australia,
 
 Presented by Black Ochre Data Labs, Telethon Kids Institute
 
+## Setup Instructions
+
+Please find a complete set of instructions for setup [here](installations.html).
+It is important that you follow these and have a working installation before 9am Tuesday, November 21^st^.
+
 ## Tuesday November 21st
 
 |     | Topic | Notes |
