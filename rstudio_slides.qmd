@@ -89,7 +89,7 @@ knitr:
 ::: {.notes}
 - I remember being at the launch of RStudio (Coventry, 2011). It was a room full of R programmers thinking "holy crap, this changes everything"
 - RStudio/Posit is a corporation whilst R is an academic-led volunteer community. So far relatively good relationship
-- Heard JJ Allaire present some of his latest work a few weeks
+- Heard JJ Allaire present some of his latest work a few weeks ago
 :::
 
 ## Some very helpful features of `RStudio`
@@ -521,6 +521,7 @@ letters[x]
     
 ::: {.notes}
 Remaining types are:
+
 - `complex` (sqrt(-1))
 - `raw` holds raw bytes `charToRaw("abc")`
 :::
