@@ -1,0 +1,601 @@
+---
+title: "Working with Text"
+subtitle: "ASI: Introduction to R"
+author: "Dr Stevie Pederson"
+institute: |
+  | Black Ochre Data Labs
+  | Telethon Kids Institute
+date: "2023-11-21"
+date-format: long
+title-slide-attributes:
+    data-background-color: "#3c3c44"
+    data-background-image: assets/bodl_logo_white_background.jpg
+    data-background-opacity: "0.3"
+    data-background-size: "90%"
+editor: source
+format: 
+  revealjs:
+    theme: [custom.scss]
+    code-line-numbers: false
+    width: 1024
+    height: 768
+    sansfont: Times New Roman
+    logo: assets/bodl_logo_white_background.jpg
+    slide-number: c/t
+    show-slide-number: all        
+  html: 
+    output-file: text.html
+    embed-resources: true
+    toc: true
+    toc-depth: 1
+include-after: |
+  <script type="text/javascript">
+    Reveal.on('ready', event => {
+      if (event.indexh === 0) {
+        document.querySelector("div.has-logo > img.slide-logo").style.display = "none";
+      }
+    });
+    Reveal.addEventListener('slidechanged', (event) => {
+      if (event.indexh === 0) {
+        Reveal.configure({ slideNumber: null });
+        document.querySelector("div.has-logo > img.slide-logo").style.display = "none";
+      }
+      if (event.indexh === 1) { 
+        Reveal.configure({ slideNumber: 'c' });
+        document.querySelector("div.has-logo > img.slide-logo").style.display = null;
+      }
+    });
+  </script>    
+knitr: 
+  opts_chunk: 
+    echo: true
+    include: true
+    warning: false
+    message: false
+    fig.align: center
+---
+
+
+```{r packages, echo=FALSE}
+library(tidyverse)
+if (interactive()) setwd(here::here("docs"))
+```
+
+# Working With Text {background-color="#3c3c44"}
+
+## Section Setup
+
+- Clear your `R` Environment
+- Create a new R script `TextManipulation.R`
+- Add `library(tidyverse)` to the top of the script and execute
+
+## Working with Text
+
+- Text manipulation is an essential part of most analyses
+    + Tidying axis labels
+    + Correcting errors
+    + Extracting shorter sample ids from full names
+    + Extracting treatment information from columns
+- Regular Expressions form a key part of this
+    + `regex` is *not* an `R` exclusive concept
+    + Pattern matching technique used in `bash`, `python` etc
+    + `R` syntax is slightly different but mostly compatible
+    
+# Text Manipulation Using `stringr` {background-color="#3c3c44" background-image=https://stringr.tidyverse.org/logo.png background-size="35%" background-opacity="0.5" background-position="70% 50%"}
+
+## Character Vectors
+
+- We can use `c()` to form a character vector
+- All values must be quoted $\implies$ unquoted text represents an `R` object
+    + `ggplot` allows unquoted column names
+    + Columns $\approx$ R objects (vectors)
+    
+::: {.notes}
+- The unquoted names in the tidyverse is a new idea
+- Widely used but old-school `R` purists prefer not
+:::
+. . .    
+
+```{r}
+pets <- c("My dog", "Your cat", "No-one's rat")
+pets
+length(pets)
+typeof(pets)
+```
+
+::: {.notes}
+- We can extract values using square brackets `[]`
+:::
+
+<!-- ## Named Vectors -->
+
+<!-- - Vectors can also have names -->
+<!--     + Names are character vectors -->
+<!-- - The exchange rate at the time the EURO commenced is an object in `R` -->
+<!--     + Names indicate the original currency -->
+
+<!-- ```{r} -->
+<!-- euro -->
+<!-- names(euro) -->
+<!-- ``` -->
+
+<!-- ## Named Vectors -->
+
+<!-- - We can use these to subset, as well as by position -->
+<!--     + Note we have created a character vector to call-by-name<br>$\implies$ `c("ATS", "BEF", "DEM")` -->
+<!--     + No need to save it $\implies$ we created it 'on-the-fly' -->
+
+<!-- ```{r} -->
+<!-- euro[1:3] -->
+<!-- euro[c("ATS", "BEF", "DEM")] -->
+<!-- ``` -->
+
+<!-- . . . -->
+
+<!-- - `pets` has no names so we have to use position only -->
+<!-- - Using names makes your code *much easier* to read back later -->
+
+
+## Text Manipulation
+
+- `stringr` is always loaded with the `tidyverse`
+- Contains nearly all functions you can imagine for text manipulation
+
+. . .
+
+- Count the characters
+
+```{r}
+str_length(pets)
+```
+
+. . .
+
+- Trim to a set length
+
+```{r}
+str_trunc(pets, width = 6)
+```
+
+## Text Manipulation
+
+- Change the case of strings
+
+```{r}
+str_to_upper(pets)
+str_to_lower(pets)
+str_to_title(pets)
+```
+
+. . .
+
+- Sort vectors into alphabetic order
+
+```{r}
+str_sort(pets)
+```
+
+
+## Pattern Matching
+
+```{r}
+pets
+```
+
+. . .
+
+- We can search for single letters [$\implies$ case-sensitive]{.fragment .fade-in}
+
+```{r}
+str_detect(pets, "y")
+```
+
+. . .
+
+- Or patterns
+
+```{r}
+str_detect(pets, "dog")
+```
+
+. . .
+
+- Alternatives can be set using `|` $\implies$ interpreted a `OR`
+
+```{r}
+str_detect(pets, "(dog|cat)")
+```
+
+## Pattern Matching
+
+- Patterns can be 'negated' using `negate = TRUE`
+
+```{r}
+str_detect(pets, "(dog|cat)", negate = TRUE)
+```
+
+. . .
+
+- Or by using `!` to negate the logical values
+
+```{r}
+!str_detect(pets, "(dog|cat)")
+```
+
+## Returning A Subset
+
+- A subset of values which match a pattern can be returned
+
+```{r}
+str_subset(pets, "at")
+```
+
+. . . 
+
+- We can also use `negate = TRUE` here
+
+
+```{r}
+str_subset(pets, "at", negate = TRUE)
+```
+
+. . .
+
+- The "long way" might also be useful
+
+```{r}
+pets[str_detect(pets, "dog")]
+```
+
+
+## Extracting Text
+
+- We can extract patterns from *within* each element
+
+```{r}
+str_extract(pets, "dog")
+```
+
+. . .
+
+- Note that `NA` is returned where no pattern is found
+    + i.e. the pattern is *missing* from that string
+    + `NA` is Not Available / Missing
+    
+. . .
+
+- We can also use the `|` to represent `OR`
+
+```{r}
+str_extract(pets, "(dog|cat)")
+```
+
+
+## Extracting Text
+
+- We can specify a range of values
+
+
+```{r}
+str_extract(pets, "[cr]at")
+```
+
+. . .
+
+- Larger ranges can be set
+    + `"[A-Z]"` restricts the pattern to any *uppercase* letters
+    + If multiple matches occur, *only the first match is returned*
+
+```{r}
+str_extract(pets, "[A-Z]")
+```
+
+. . .
+
+- Changing to lower-case using `"[a-z]"`
+
+```{r}
+str_extract(pets, "[a-z]")
+```
+
+## Extracting Text
+
+- Patterns can be extended by adding a `+` symbol <br>$\implies$ Match one or more values
+    + Will return the first match of *one or more lowercase letters*
+
+```{r}
+str_extract(pets, "[a-z]+")
+```
+
+. . .
+
+- `[A-Za-z]` can be combined as `[:alpha:]`
+
+```{r}
+str_extract(pets, "[:alpha:]+")
+```
+
+. . .
+
+- What happened at each non-letter? [*The match stopped*]{.fragment .fade-in}
+
+## Removing Text
+
+- We can remove patterns using `str_remove()`
+
+```{r}
+str_remove(pets, "o")
+```
+
+. . .
+
+- This only removed the first match
+    + `str_remove_all()` removes all matches
+    
+```{r}
+str_remove_all(pets, "o")
+str_remove_all(pets, "[A-Z]")
+```
+
+## Wildcards
+
+- Regular Expressions use `"."` as a wildcard <br>$\implies$ `*` extends a match *zero* or more times (similar to `+`)
+
+. . .
+
+- The pattern `" ."` matches a space followed by anything
+
+```{r}
+str_remove_all(pets, " ")
+str_remove_all(pets, " .")
+```
+
+. . .
+
+- A very common pattern is `".+"`
+    + Means *match anything any number of times*
+    
+. . .    
+    
+```{r}
+str_remove_all(pets, " .+")
+```
+
+. . .
+
+- Often multiple ways to obtain your target
+
+## Replacing Patterns
+
+- `str_replace_all()` is the most powerful of the core functions
+- Has arguments `string`, `pattern` and `replacement`
+    + The pattern `"a"` will be replaced by `"o"`
+
+```{r}
+str_replace_all(pets, pattern = "a", replacement = "o")
+```
+
+. . .
+
+- Turn all lowercase letters into `a`
+
+```{r}
+str_replace_all(pets, "[a-z]", "a")
+```
+
+## Replacing Patterns
+
+- We can capture patterns and return however we wish
+    + Patterns to capture are placed within a `"()"`
+    + Captures are returned in order using `\\1`, `\\2`...
+    
+. . .    
+    
+- The follow pattern captures the entire text string `"(.+)"`
+    + Match anything, any number of times
+    + Then return with exclamations added
+
+
+```{r}
+str_replace_all(pets, "(.+)", "\\1!!!")
+```
+
+## Replacing Patterns
+
+- We can also capture multiple patterns
+    + Can you understand the following?
+
+```{r}
+str_replace_all(pets, "(.+) (.)(.)(.)", "\\1 \\4\\3\\2")
+```
+
+
+## Other Useful Functions
+
+- `paste()` is a key `base` function
+    + Combines text from two vectors
+    + `R` automatically recycles values when vector lengths don't match
+
+```{r}
+paste(c("A", "B", "C"), 1:3)
+paste(pets, "is great")
+```
+
+## Other Useful Functions
+
+- `paste()` uses `sep = " "` as the default separator
+    + Can be any characters at all
+
+```{r}
+paste(pets, "Hmm...", sep = "? ")
+```
+
+. . .
+
+- `paste0()` is a shortcut for `paste(sep = "")`
+
+```{r}
+paste0(pets, "!!!")
+```
+
+## Some Challenges
+
+1. Given a vector of Transcript IDs with versions, remove the version number?
+
+```{r}
+ids <- c("ENST00000376207.10", "ENST00000376199.7")
+```
+
+2. Add the 'chr' prefix to these chromosomes
+
+```{r}
+chr <- c(1:22, "X", "Y", "M")
+```
+
+3. Pull the chromosome out of these cytogenetic bands
+
+```{r}
+cyto <- c("Xp11.23", "11q2.3", "2p7.1")
+```
+
+4. Convert the following genes from human to mouse
+
+```{r}
+genes <- c("FOXP3", "IL2RA", "CXCR2")
+```
+
+5. Load the `RealTimeData.xlsx` file, renaming the first column (as before). Extract the timepoint from the first column, ensuring that "h" is always lower case.
+
+## Working With Strings
+
+- Is an incredibly common and important part of working with R
+- Extract sample IDs from file names
+- Pull key information from columns
+- Remove prefixes/suffixes
+- Correct data entry errors in your spreadsheet
+- Format for pretty plotting
+
+# Factors {background-color="#3c3c44" background-image=https://forcats.tidyverse.org/logo.png background-size="30%" background-opacity="0.5"}
+
+## Factors
+
+- Categorical variables are called `factors`
+- `forcats` is the `tidyverse` package
+    + Genius name...
+- `base` functions are still very commonly used and simple
+    + `as.factor()` and `factor()`
+
+. . .
+
+- Character vectors are always quoted when printed
+- Factors are never shown quoted
+
+**Very easy to mix characters and factors up**
+
+## Factors
+
+:::: {style="font-size:95%"}
+
+```{r}
+pigs <- read_csv("data/pigs.csv")
+dose <- pigs$dose
+dose
+```
+
+- Notice that we have many repeated values
+    + Very common for categorical variables
+
+::: {.fragment}
+
+- `as.factor()` from `base` creates factors in alphanumeric order
+    + Prints the category levels at the bottom
+    
+```{r}
+dose_fct <- as.factor(dose)
+dose_fct
+```
+
+:::
+
+::: {.fragment}
+
+- This is how our first boxplots were produced
+
+::::
+
+::::
+
+## Factors
+
+- We can manually set the levels using `factor()`
+    + Levels are passed *as a character vector*
+    + Enables us to manually set the order
+
+```{r}
+dose_fct <- factor(dose, levels = c("Low", "Med", "High"))
+dose_fct
+```
+
+
+## Forcats
+
+- `forcats` offers some new approaches
+    + `fct` creates factors in order (as does `fct_inorder()`)
+
+```{r}
+fct(dose)
+fct_inorder(dose)
+```
+
+## Forcats
+
+- Can reformat the category levels
+
+```{r}
+fct_relabel(dose_fct, .fun = str_to_lower)
+```
+
+. . .
+
+- Reverse the order
+
+```{r}
+fct_rev(dose_fct)
+```
+
+
+## Our Previous Plot
+
+:::: {style="font-size:92%"}
+
+```{r boxplot-pigs}
+#| fig-width: 5
+#| fig-height: 4.5
+#| fig-align: 'left'
+#| output-location: column-fragment
+#| code-line-numbers: '1-4|5-16'
+## First change the original column
+pigs$dose <- factor(
+  pigs$dose, levels = c("Low", "Med", "High")
+)
+## Then make the plot
+ggplot(
+  pigs, aes(x = dose, y = len, fill = supp)
+) +
+  geom_boxplot() +
+  scale_fill_brewer(palette = "Set2") +
+  labs(
+    x = "Vitamin C Dose", 
+    y = "Odontoblast Length", 
+    fill = "Method"
+  ) +
+  theme_bw() 
+```
+
+::::
+
+## Factors
+
+- All plotting functions automatically coerce strings to factors
+- Performing manually gives far greater control
+- Also useful for setting reference levels during statistical analysis

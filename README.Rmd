@@ -41,5 +41,6 @@ All data for the session is available [here](data.zip).
 | 10:30 - 11:00 | Morning Tea Break       |                                 | 30min |
 | 11:00 - 13:00 | Bringing Data Into R (cont.) |  | 15min |
 |               | Simple Visualisations | [Introduction to `ggplot2`](basic_ggplot2.html) | `r getTiming("import_slides.qmd", 1.5, -1)` |
+|               | Working With Text     | [Working With Text](text.html) | `r getTiming("text_slides.qmd", 1.5, -1)` |
 
 ## Wednesday November 22nd

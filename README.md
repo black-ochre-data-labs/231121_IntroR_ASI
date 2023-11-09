@@ -29,5 +29,6 @@ All data for the session is available [here](data.zip).
 | 10:30 - 11:00 | Morning Tea Break            |                                                 |              30min |
 | 11:00 - 13:00 | Bringing Data Into R (cont.) |                                                 |              15min |
 |               | Simple Visualisations        | [Introduction to `ggplot2`](basic_ggplot2.html) |              60min |
+|               | Working With Text            | [Working With Text](text.html)                  |              40min |
 
 ## Wednesday November 22nd
