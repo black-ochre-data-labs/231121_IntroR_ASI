@@ -9,7 +9,7 @@
 <meta name="author" content="Dr Stevie Pederson">
 <meta name="dcterms.date" content="2023-11-21">
 
-<title>Using RStudio</title>
+<title>Using RStudio To Write Scripts</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -3144,7 +3144,7 @@ return!"\t\n\x0B\f\r                　\u2028\u2029
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">Using RStudio</h1>
+<h1 class="title">Using RStudio To Write Scripts</h1>
 <p class="subtitle lead">ASI: Introduction to R</p>
 </div>
 
@@ -3221,7 +3221,7 @@ return!"\t\n\x0B\f\r                　\u2028\u2029
 <ul>
 <li>I remember being at the launch of RStudio (Coventry, 2011). It was a room full of R programmers thinking “holy crap, this changes everything”</li>
 <li>RStudio/Posit is a corporation whilst R is an academic-led volunteer community. So far relatively good relationship</li>
-<li>Heard JJ Allaire present some of his latest work a few weeks</li>
+<li>Heard JJ Allaire present some of his latest work a few weeks ago</li>
 </ul>
 </div>
 </section>
@@ -3353,15 +3353,19 @@ return!"\t\n\x0B\f\r                　\u2028\u2029
 </section>
 <section id="the-r-console-2" class="level2">
 <h2 class="anchored" data-anchor-id="the-r-console-2">The R Console</h2>
-<p><br>As well as performing simple calculations:</p>
+<p>As well as performing simple calculations:</p>
 <ul>
 <li><code>R</code> has what we call an <code>Environment</code> (i.e. a Workspace)</li>
-<li>We can define objects here, or import data
+<li>We can define objects here or import data
 <ul>
-<li>Similar to a workbook in Excel</li>
+<li>Similar to a workbook in Excel with multiple worksheets</li>
+<li>Or maybe a desktop in your study with crap everywhere</li>
 <li><strong>Much more</strong> flexible &amp; powerful</li>
 </ul></li>
 </ul>
+<div class="notes">
+<p>When we create a new sheet in Excel, we’re actually creating an object. Most commonly, it’s named Sheet1 or something similar</p>
+</div>
 <p>. . .</p>
 <ul>
 <li>Objects can look like spreadsheets, be a single number or even empty
@@ -3370,9 +3374,6 @@ return!"\t\n\x0B\f\r                　\u2028\u2029
 </ul></li>
 <li><code>R</code> performs calculations &amp; runs processes on these objects</li>
 </ul>
-<div class="notes">
-<p>When we create a new sheet in Excel, we’re actually creating an object. Most commonly, it’s named Sheet1 or something similar</p>
-</div>
 </section>
 <section id="the-r-environment" class="level2">
 <h2 class="anchored" data-anchor-id="the-r-environment">The R Environment</h2>
@@ -3396,7 +3397,7 @@ return!"\t\n\x0B\f\r                　\u2028\u2029
 <section id="the-r-environment-1" class="level2">
 <h2 class="anchored" data-anchor-id="the-r-environment-1">The R Environment</h2>
 <ul>
-<li>The <code>Environment</code> is like your desktop</li>
+<li>The <code>R Environment</code> is like your desktop</li>
 <li>We keep all our relevant objects here
 <ul>
 <li>Multiple objects are usually created during an analysis</li>
@@ -3524,7 +3525,7 @@ return!"\t\n\x0B\f\r                　\u2028\u2029
 <h1 data-background-color="#3c3c44">The Script Window</h1>
 <section id="rstudio-the-script-window" class="level2">
 <h2 class="anchored" data-anchor-id="rstudio-the-script-window">RStudio: The Script Window</h2>
-<p>Best practice for all analysis is to enter our code in the Script Window</p>
+<p>Best practice for analysis is to enter all code in the Script Window</p>
 <ul>
 <li>This is a plain text editor <span class="math inline">\(\implies\)</span> <code>RStudio</code> will:
 <ul>
@@ -3532,7 +3533,7 @@ return!"\t\n\x0B\f\r                　\u2028\u2029
 <li>help manage indenting</li>
 <li>enable auto-completion (it can be slower than your typing)</li>
 </ul></li>
-<li>Enter code in this window and <em>send it to the R Console</em><br>
+<li>Enter code in your script and <em>send it to the R Console</em><br>
 </li>
 <li>We save this file as a record of what we’ve done
 <ul>
@@ -3574,12 +3575,18 @@ return!"\t\n\x0B\f\r                　\u2028\u2029
 </ul></li>
 </ul>
 </div>
+<div class="notes">
+<ul>
+<li>This will have overwritten our previous object.</li>
+<li>Check the Environment Tab to see the changes</li>
+</ul>
+</div>
 </section>
 <section id="rstudio-the-script-window-3" class="level2">
 <h2 class="anchored" data-anchor-id="rstudio-the-script-window-3">RStudio: The Script Window</h2>
 <p>As well as creating objects, we can write general code</p>
 <div class="cell" data-layout-align="center">
-<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># x is a vector. To check how many values are in the vector</span></span>
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># x is a vector. How many values are in the vector?</span></span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="fu">length</span>(x)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 5</code></pre>
@@ -3599,6 +3606,7 @@ return!"\t\n\x0B\f\r                　\u2028\u2029
 <p><strong>When we executed <code>length(x)</code> did we create a new object?</strong></p>
 <p>. . .</p>
 <p>No, we just called the function <code>length()</code> and executed it on <code>x</code></p>
+<p>The output of the function was simply printed to the console</p>
 <p>. . .</p>
 </section>
 <section id="vectors" class="level2">
@@ -3616,7 +3624,7 @@ return!"\t\n\x0B\f\r                　\u2028\u2029
 <p>. . .</p>
 <p>Add the following to your script</p>
 <div class="cell" data-layout-align="center">
-<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># I&#39;m not sure. Are any values of x greater than one?</span></span>
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Which values of x are greater than one?</span></span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>x <span class="sc">&gt;</span> <span class="dv">1</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] FALSE  TRUE  TRUE  TRUE  TRUE</code></pre>
@@ -3651,6 +3659,7 @@ return!"\t\n\x0B\f\r                　\u2028\u2029
 <li><code>x</code> clearly contains numbers (i.e. integers)
 <ul>
 <li>Can be checked using <code>typeof(x)</code></li>
+<li>A vector only contains one <em>type</em> of value</li>
 </ul></li>
 <li>Vectors can also contain characters
 <ul>
@@ -3665,11 +3674,11 @@ return!"\t\n\x0B\f\r                　\u2028\u2029
 <div class="cell" data-layout-align="center">
 <div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co"># R has an inbuilt vector with the lower case letters of the alphabet</span></span>
 <span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>letters</span>
-<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a><span class="co"># How many letters are in this vector</span></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a><span class="co"># How many letters are in this vector?</span></span>
 <span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a><span class="fu">length</span>(letters)</span>
 <span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Can characters have a maximum value?</span></span>
 <span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a><span class="fu">max</span>(letters)</span>
-<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Can we add characters?</span></span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Can we add characters to find a sum?</span></span>
 <span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a><span class="fu">sum</span>(letters)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
@@ -3685,18 +3694,6 @@ return!"\t\n\x0B\f\r                　\u2028\u2029
 <pre><code>[1] &quot;a&quot; &quot;b&quot; &quot;c&quot; &quot;d&quot; &quot;e&quot;</code></pre>
 </div>
 </div>
-<p>. . .</p>
-<div class="cell" data-layout-align="center">
-<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Can I use `x` for this?</span></span>
-<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>letters[x]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>[1] &quot;a&quot; &quot;b&quot; &quot;c&quot; &quot;d&quot; &quot;e&quot;</code></pre>
-</div>
-</div>
-<p>. . .</p>
-<ul>
-<li>That last step may have confused a few people <br><span class="math inline">\(\implies\)</span> Will become clearer as we progress</li>
-</ul>
 </section>
 <section id="vector-types" class="level2">
 <h2 class="anchored" data-anchor-id="vector-types">Vector Types</h2>
@@ -3727,21 +3724,25 @@ return!"\t\n\x0B\f\r                　\u2028\u2029
 <li><code>character</code></li>
 </ol>
 <div class="notes">
-<p>Remaining types are: - <code>complex</code> (sqrt(-1)) - <code>raw</code> holds raw bytes <code>charToRaw(&quot;abc&quot;)</code></p>
+<p>Remaining types are:</p>
+<ul>
+<li><code>complex</code> (sqrt(-1))</li>
+<li><code>raw</code> holds raw bytes <code>charToRaw(&quot;abc&quot;)</code></li>
+</ul>
 </div>
 </section>
 <section id="examples" class="level2">
 <h2 class="anchored" data-anchor-id="examples">Examples</h2>
 <p>A logical vector is returned by a logical test</p>
 <div class="cell" data-layout-align="center">
-<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="co"># This returns a logical vector the same length as x</span></span>
-<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Let&#39;s save the output as a new vector using the &lt;- symbol</span></span>
-<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>logi_vec <span class="ot">&lt;-</span> x <span class="sc">&gt;</span> <span class="dv">1</span></span>
-<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>logi_vec</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="co"># This returns a logical vector the same length as x</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Let&#39;s save the output as a new vector using the &lt;- symbol</span></span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>logi_vec <span class="ot">&lt;-</span> x <span class="sc">&gt;</span> <span class="dv">1</span></span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>logi_vec</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] FALSE  TRUE  TRUE  TRUE  TRUE</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="fu">typeof</span>(logi_vec)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="fu">typeof</span>(logi_vec)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] &quot;logical&quot;</code></pre>
 </div>
@@ -3749,13 +3750,13 @@ return!"\t\n\x0B\f\r                　\u2028\u2029
 <p>. . .</p>
 <p>Taking square roots will return values with decimal points</p>
 <div class="cell" data-layout-align="center">
-<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="co"># The square roots have decimal points so they are doubles</span></span>
-<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>dbl_vec <span class="ot">&lt;-</span> <span class="fu">sqrt</span>(x)</span>
-<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>dbl_vec</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="co"># The square roots have decimal points so they are doubles</span></span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>dbl_vec <span class="ot">&lt;-</span> <span class="fu">sqrt</span>(x)</span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>dbl_vec</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 1.000000 1.414214 1.732051 2.000000 2.236068</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="fu">typeof</span>(dbl_vec)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="fu">typeof</span>(dbl_vec)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] &quot;double&quot;</code></pre>
 </div>
@@ -3767,13 +3768,13 @@ return!"\t\n\x0B\f\r                　\u2028\u2029
 <li>Vectors can be coerced to other types</li>
 </ul>
 <div class="cell" data-layout-align="center">
-<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Coercing x to characters will show every element with quotation marks</span></span>
-<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>char_vec <span class="ot">&lt;-</span> <span class="fu">as.character</span>(x)</span>
-<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>char_vec</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Coercing x to a character vector will show every element with quotation marks</span></span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>char_vec <span class="ot">&lt;-</span> <span class="fu">as.character</span>(x)</span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>char_vec</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] &quot;1&quot; &quot;2&quot; &quot;3&quot; &quot;4&quot; &quot;5&quot;</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="fu">typeof</span>(char_vec)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="fu">typeof</span>(char_vec)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] &quot;character&quot;</code></pre>
 </div>
@@ -3784,11 +3785,11 @@ return!"\t\n\x0B\f\r                　\u2028\u2029
 <li>Information is lost going backwards</li>
 </ul>
 <div class="cell" data-layout-align="center">
-<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="fu">as.integer</span>(logi_vec)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="fu">as.integer</span>(logi_vec)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 0 1 1 1 1</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="fu">as.logical</span>(x)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="fu">as.logical</span>(x)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] TRUE TRUE TRUE TRUE TRUE</code></pre>
 </div>
@@ -3800,17 +3801,17 @@ return!"\t\n\x0B\f\r                　\u2028\u2029
 <li>We could use our results from the logical test to subset <code>x</code></li>
 </ul>
 <div class="cell" data-layout-align="center">
-<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="co"># These two commands return the same vector</span></span>
-<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a>x[x <span class="sc">&gt;</span> <span class="dv">1</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="co"># These two commands return the same vector</span></span>
+<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a>x[x <span class="sc">&gt;</span> <span class="dv">1</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 2 3 4 5</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a>x[logi_vec]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a>x[logi_vec]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 2 3 4 5</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb37"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a><span class="co"># This returns the positions within logi_vec which are TRUE</span></span>
-<span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a><span class="fu">which</span>(logi_vec)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="co"># This returns the positions within logi_vec which are TRUE</span></span>
+<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a><span class="fu">which</span>(logi_vec)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 2 3 4 5</code></pre>
 </div>
@@ -3826,7 +3827,7 @@ return!"\t\n\x0B\f\r                　\u2028\u2029
 </ul></li>
 </ul>
 <div class="cell" data-layout-align="center">
-<div class="sourceCode cell-code" id="cb39"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a><span class="fu">c</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb37"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a><span class="fu">c</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>NULL</code></pre>
 </div>
@@ -3836,14 +3837,16 @@ return!"\t\n\x0B\f\r                　\u2028\u2029
 <li>Add your own comments to describe the following</li>
 </ul>
 <div class="cell" data-layout-align="center">
-<div class="sourceCode cell-code" id="cb41"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Make a vector of doubles</span></span>
-<span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a>rnd <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="fl">5.2</span>, <span class="dv">100</span>, <span class="fl">3.1</span>)</span>
-<span id="cb41-3"><a href="#cb41-3" aria-hidden="true" tabindex="-1"></a>rnd</span>
-<span id="cb41-4"><a href="#cb41-4" aria-hidden="true" tabindex="-1"></a><span class="fu">length</span>(rnd)</span>
-<span id="cb41-5"><a href="#cb41-5" aria-hidden="true" tabindex="-1"></a><span class="fu">typeof</span>(rnd)</span>
-<span id="cb41-6"><a href="#cb41-6" aria-hidden="true" tabindex="-1"></a>rnd <span class="sc">&gt;</span> <span class="dv">5</span></span>
-<span id="cb41-7"><a href="#cb41-7" aria-hidden="true" tabindex="-1"></a><span class="fu">which</span>(rnd <span class="sc">&gt;</span> <span class="dv">5</span>)</span>
-<span id="cb41-8"><a href="#cb41-8" aria-hidden="true" tabindex="-1"></a>rnd[rnd <span class="sc">&gt;</span> <span class="dv">5</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb39"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Make a vector of doubles with names for each value</span></span>
+<span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a>rnd <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="at">a =</span> <span class="dv">1</span>, <span class="at">b =</span> <span class="fl">5.2</span>, <span class="at">c =</span> <span class="dv">100</span>, <span class="at">d =</span> <span class="fl">3.1</span>)</span>
+<span id="cb39-3"><a href="#cb39-3" aria-hidden="true" tabindex="-1"></a>rnd</span>
+<span id="cb39-4"><a href="#cb39-4" aria-hidden="true" tabindex="-1"></a><span class="fu">length</span>(rnd)</span>
+<span id="cb39-5"><a href="#cb39-5" aria-hidden="true" tabindex="-1"></a><span class="fu">typeof</span>(rnd)</span>
+<span id="cb39-6"><a href="#cb39-6" aria-hidden="true" tabindex="-1"></a>rnd <span class="sc">&gt;</span> <span class="dv">5</span></span>
+<span id="cb39-7"><a href="#cb39-7" aria-hidden="true" tabindex="-1"></a><span class="fu">which</span>(rnd <span class="sc">&gt;</span> <span class="dv">5</span>)</span>
+<span id="cb39-8"><a href="#cb39-8" aria-hidden="true" tabindex="-1"></a>rnd[rnd <span class="sc">&gt;</span> <span class="dv">5</span>]</span>
+<span id="cb39-9"><a href="#cb39-9" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(rnd)</span>
+<span id="cb39-10"><a href="#cb39-10" aria-hidden="true" tabindex="-1"></a>rnd[<span class="st">&quot;b&quot;</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 <section id="conclusion" class="level2">
@@ -3853,7 +3856,7 @@ return!"\t\n\x0B\f\r                　\u2028\u2029
 <li>This is now a complete R Script
 <ul>
 <li>Can be re-run at any time in the same order</li>
-<li>Will produce identical results</li>
+<li>Will always produce identical results</li>
 </ul></li>
 </ul>
 <p>. . .</p>
@@ -3871,7 +3874,7 @@ return!"\t\n\x0B\f\r                　\u2028\u2029
 <li>Step through the entire vector one value at a time</li>
 </ul></li>
 </ul>
-<div class="sourceCode" id="cb42"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>) <span class="fu">print</span>(<span class="fu">sqrt</span>(x[i]))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb40"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>) <span class="fu">print</span>(<span class="fu">sqrt</span>(x[i]))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="notes">
 <ul>
 <li>Clearly these vectors were trivial</li>

@@ -11,6 +11,8 @@ Presented by Black Ochre Data Labs, Telethon Kids Institute
 Please find a complete set of instructions for setup [here](installation.html).
 It is important that you follow these and have a working installation before 9am Tuesday, November 21st.
 
+All data for the session is available [here](data.zip).
+
 ## Tuesday November 21st
 
 |     | Topic | Notes |

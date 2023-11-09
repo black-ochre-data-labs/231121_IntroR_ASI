@@ -1,5 +1,5 @@
 ---
-title: "Using RStudio"
+title: "Using RStudio To Write Scripts"
 subtitle: "ASI: Introduction to R"
 author: "Dr Stevie Pederson"
 institute: |
@@ -191,23 +191,25 @@ knitr::include_graphics("assets/RStudio.png")
 
 ## The R Console
 
-<br>As well as performing simple calculations:
+As well as performing simple calculations:
 
 - `R` has what we call an `Environment` (i.e. a Workspace)
-- We can define objects here, or import data
-   - Similar to a workbook in Excel
+- We can define objects here or import data
+   - Similar to a workbook in Excel with multiple worksheets
+   - Or maybe a desktop in your study with crap everywhere
    - **Much more** flexible & powerful
    
+::: {.notes}
+When we create a new sheet in Excel, we're actually creating an object.
+Most commonly, it's named Sheet1 or something similar
+:::
+
 . . .   
    
 - Objects can look like spreadsheets, be a single number or even empty
    - 'omics data often has more complicated but defined structures
 - `R` performs calculations & runs processes on these objects
 
-::: {.notes}
-When we create a new sheet in Excel, we're actually creating an object.
-Most commonly, it's named Sheet1 or something similar
-:::
 
 ## The R Environment 
 
@@ -235,7 +237,7 @@ x <- 5
 
 ## The R Environment
 
-- The `Environment` is like your desktop
+- The `R Environment` is like your desktop
 - We keep all our relevant objects here 
     + Multiple objects are usually created during an analysis
     + Can save all the objects in your workspace as a single `.RData` object
@@ -338,13 +340,13 @@ Page 2 has lots of hints:
 
 ## RStudio: The Script Window
 
-Best practice for all analysis is to enter our code in the Script Window
+Best practice for analysis is to enter all code in the Script Window
 
 - This is a plain text editor $\implies$ `RStudio` will:
     - highlight syntax for us
     - help manage indenting
     - enable auto-completion (it can be slower than your typing)
-- Enter code in this window and *send it to the R Console*    
+- Enter code in your script and *send it to the R Console*    
 - We save this file as a record of what we've done
     - Code is the important object $\implies$ can recreate all results
 
@@ -381,12 +383,17 @@ To send this to the Console:
 
 :::
 
+::: {.notes}
+- This will have overwritten our previous object.
+- Check the Environment Tab to see the changes
+:::
+
 ## RStudio: The Script Window
 
 As well as creating objects, we can write general code
 
 ```{r}
-# x is a vector. To check how many values are in the vector
+# x is a vector. How many values are in the vector?
 length(x)
 ```
 
@@ -411,6 +418,8 @@ Including comments describing your intention, is **highly advisable**
 
 No, we just called the function `length()` and executed it on `x`
 
+The output of the function was simply printed to the console
+
 . . .
 
 ## Vectors
@@ -425,7 +434,7 @@ No, we just called the function `length()` and executed it on `x`
 Add the following to your script 
 
 ```{r}
-# I'm not sure. Are any values of x greater than one?
+# Which values of x are greater than one?
 x > 1
 ```
 
@@ -456,6 +465,7 @@ typeof(x)
 
 - `x` clearly contains numbers (i.e. integers)
     + Can be checked using `typeof(x)`
+    + A vector only contains one *type* of value
 - Vectors can also contain characters
     + We cannot perform calculations on these vectors
     + Some functions *do work* though
@@ -467,11 +477,11 @@ typeof(x)
 ```{r, eval = FALSE}
 # R has an inbuilt vector with the lower case letters of the alphabet
 letters
-# How many letters are in this vector
+# How many letters are in this vector?
 length(letters)
 # Can characters have a maximum value?
 max(letters)
-# Can we add characters?
+# Can we add characters to find a sum?
 sum(letters)
 ```
 
@@ -484,16 +494,6 @@ sum(letters)
 letters[1:5]
 ```
 
-. . .
-
-```{r}
-# Can I use `x` for this?
-letters[x]
-```
-
-. . .
-
-- That last step may have confused a few people <br>$\implies$ Will become clearer as we progress
 
 ## Vector Types
 
@@ -554,7 +554,7 @@ typeof(dbl_vec)
 - Vectors can be coerced to other types
 
 ```{r}
-# Coercing x to characters will show every element with quotation marks
+# Coercing x to a character vector will show every element with quotation marks
 char_vec <- as.character(x)
 char_vec
 typeof(char_vec)
@@ -597,14 +597,16 @@ c()
 - Add your own comments to describe the following
 
 ```{r, eval = FALSE}
-# Make a vector of doubles
-rnd <- c(1, 5.2, 100, 3.1)
+# Make a vector of doubles with names for each value
+rnd <- c(a = 1, b = 5.2, c = 100, d = 3.1)
 rnd
 length(rnd)
 typeof(rnd)
 rnd > 5
 which(rnd > 5)
 rnd[rnd > 5]
+names(rnd)
+rnd["b"]
 ```
 
 
@@ -613,7 +615,7 @@ rnd[rnd > 5]
 - Make sure you save the file `Introduction.R`
 - This is now a complete R Script
     + Can be re-run at any time in the same order
-    + Will produce identical results
+    + Will always produce identical results
 
 . . .
 
