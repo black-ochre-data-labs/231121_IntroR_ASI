@@ -1174,6 +1174,19 @@ Dr Stevie Pederson
 <pre><code>[1] "Sheet1" "Sheet2" "Sheet3"</code></pre>
 </div>
 </div>
+<aside class="notes">
+<p>I found this file after a random Google search for RT-PCR and Excel about 10 years ago. I didn’t keep track of who created it…</p>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
 <div class="fragment">
 <ul>
 <li>Once again we can click on the file <span class="math inline">\(\implies\)</span> <code>Import Dataset</code>
@@ -1186,6 +1199,22 @@ Dr Stevie Pederson
 <div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a>pcr <span class="ot">&lt;-</span> <span class="fu">read_excel</span>(<span class="st">"data/RealTimeData.xlsx"</span>)</span>
 <span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a><span class="fu">colnames</span>(pcr)[<span class="dv">1</span>] <span class="ot">&lt;-</span> <span class="st">"Sample"</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
+</div>
+<div class="fragment">
+<ul>
+<li>There are two pieces of data in the 1st column
+<ul>
+<li>We’ll learn how to manage this in the next session</li>
+</ul></li>
+</ul>
+</div>
+<div class="fragment">
+<ul>
+<li>Have a look at the previews of Sheet2 and Sheet3
+<ul>
+<li>Everything here is surprisingly easy to wrangle</li>
+</ul></li>
+</ul>
 <p><img src="assets/bodl_logo_white_background.jpg" class="slide-logo"></p>
 <div class="footer footer-default">
 
