@@ -58,7 +58,6 @@ knitr:
 
 ```{r packages, echo=FALSE}
 library(tidyverse)
-if (interactive()) setwd(here::here("docs"))
 ```
 
 # Working With Text {background-color="#3c3c44"}
@@ -292,11 +291,38 @@ str_extract(pets, "[A-Z]")
 
 . . .
 
-- Changing to lower-case using `"[a-z]"`
+- Select lower-case letters using `"[a-z]"`
 
 ```{r}
 str_extract(pets, "[a-z]")
 ```
+
+
+## Extracting Text
+
+- Patterns can be anchored to the end of a string using "$"
+
+```{r}
+str_extract(pets, "[a-z]$")
+```
+
+. . .
+
+- Patterns can be anchored to the start using "^"
+    + Notice that no lower-case letters are at the start of our vector
+
+```{r}
+str_extract(pets, "^[a-z]")
+```
+
+. . .
+
+- Using "^" **inside** the square brackets acts as "NOT"
+
+```{r}
+str_extract(pets, "[^A-Z]")
+```
+
 
 ## Extracting Text
 
@@ -461,10 +487,23 @@ cyto <- c("Xp11.23", "11q2.3", "2p7.1")
 4. Convert the following genes from human to mouse
 
 ```{r}
-genes <- c("FOXP3", "IL2RA", "CXCR2")
+genes <- c("FOXP3", "IL2RA", "CTLA4")
 ```
 
-5. Load the `RealTimeData.xlsx` file, renaming the first column (as before). Extract the timepoint from the first column, ensuring that "h" is always lower case.
+5. Remove the suffix ".bam" from these filenames
+
+```{r}
+bams <- c("rna_bamboo1.bam", "rna_rice1.bam", "rna_wheat1.bam")
+```
+
+6. Load the `RealTimeData.xlsx` file as before. Extract the timepoint from the first column, ensuring that "h" is always lower case.
+
+
+
+::: {.notes}
+Most of these have multiple solutions
+:::
+
 
 ## Working With Strings
 
