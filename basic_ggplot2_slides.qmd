@@ -1,0 +1,475 @@
+---
+title: "Basic Plotting With `ggplot2`"
+subtitle: "ASI: Introduction to R"
+author: "Dr Stevie Pederson"
+institute: |
+  | Black Ochre Data Labs
+  | Telethon Kids Institute
+date: "2023-11-21"
+date-format: long
+title-slide-attributes:
+    data-background-color: "#3c3c44"
+    data-background-image: assets/bodl_logo_white_background.jpg
+    data-background-opacity: "0.3"
+    data-background-size: "90%"
+editor: source
+format: 
+  revealjs:
+    theme: [custom.scss]
+    code-line-numbers: false
+    width: 1024
+    height: 768
+    sansfont: Times New Roman
+    logo: assets/bodl_logo_white_background.jpg
+    slide-number: c/t
+    show-slide-number: all        
+  html: 
+    output-file: basic_ggplot2.html
+    embed-resources: true
+    toc: true
+    toc-depth: 1
+include-after: |
+  <script type="text/javascript">
+    Reveal.on('ready', event => {
+      if (event.indexh === 0) {
+        document.querySelector("div.has-logo > img.slide-logo").style.display = "none";
+      }
+    });
+    Reveal.addEventListener('slidechanged', (event) => {
+      if (event.indexh === 0) {
+        Reveal.configure({ slideNumber: null });
+        document.querySelector("div.has-logo > img.slide-logo").style.display = "none";
+      }
+      if (event.indexh === 1) { 
+        Reveal.configure({ slideNumber: 'c' });
+        document.querySelector("div.has-logo > img.slide-logo").style.display = null;
+      }
+    });
+  </script>      
+knitr: 
+  opts_chunk: 
+    echo: true
+    include: true
+    warning: false
+    message: false
+    fig.align: center
+---
+
+# Basic Data Visualisation {background-color="#3c3c44"}
+
+
+## Data Visualisation
+
+
+- Now we know how to import data $\implies$ *what does it look like?*
+
+. . .
+
+- Traditionally `R` used functions from `base` and `graphics`
+
+. . .
+
+- The main plotting package from the `tidyverse` is `ggplot2`
+    + Incredibly powerful approach to plotting
+    + Uses an approach known as "Grammar of Graphics" (`gg`)
+- Less intuitive than traditional `R` plots 
+    + Far simpler after some practice
+    + Much more powerful
+
+
+## Setup For This Section
+
+1. Clear your R Environment
+2. Create a new R script called `IntroVisualisation.R`
+3. Copy the following chunk from the earlier section
+
+```{r reload-pigs}
+library(tidyverse)
+pigs <- read_csv("data/pigs.csv")
+glimpse(pigs)
+```
+
+## Plotting using `base`
+
+`cars` is a 2-column data.frame that `R` provides for making examples
+
+::: {.columns}
+
+::: {.column}
+
+```{r baseplot-len, fig.cap = "Distance taken to stop shown as a function of a car's speed"}
+#| fig-width: 5
+#| fig-height: 5
+#| fig-align: 'left'
+plot(cars$speed, cars$dist)
+```
+
+:::
+
+::: {.column}
+::: {.fragment}
+- This is a basic `x` vs `y` plot
+- Simple plots are pretty customisable
+- Good for *quick & dirty* looks at data
+:::
+:::
+
+:::
+
+## Histograms
+
+- Histograms using `hist()` can be pretty useful
+
+```{r hist-len}
+#| fig-width: 6
+#| fig-height: 5
+#| fig-align: 'left'
+#| output-location: fragment
+hist(cars$dist)
+```
+
+
+## Boxplots using `base`
+
+- Boxplots usually require a grouping variable on the x-axis
+    + Use `pigs` specifying `dose` as the grouping variable
+- The formula syntax `len ~ dose` $\implies$ `len` "depends on" `dose`
+    - Predictor (`dose`) on the x-axis $\implies$ Response (`len`) on the y-axis
+
+```{r boxplot-len}
+#| fig-width: 4.5
+#| fig-height: 4.5
+#| fig-align: 'left'
+#| output-location: column-fragment
+boxplot(len ~ dose, data = pigs)
+```
+
+::: {.notes}
+Note that the x-axis is showing dose level in alphabetical order
+:::
+
+
+# Using `ggplot2` {background-color="#3c3c44" background-image=https://ggplot2.tidyverse.org/logo.png background-size="30%" background-opacity="0.4" background-position="67% 50%"}
+
+## `ggplot2` Basics
+
+Instead of a single function $\implies$ build a plot using *multiple layers*
+
+1. Start by defining the data object
+    + Values for `x` & `y` axes usually defined here
+2. Add layers defining the *geometry* to use
+    + May be points (`geom_point`), boxplots (`geom_boxplot`) etc
+    + Text overlays (`annotate`) or regression lines (`stat_smooth`)
+    
+. . .    
+    
+3. *Optionally* split into panels or facets
+4. *Optionally* modify any scales used
+5. *Optionally* tidy up labels
+6. *Optionally* define an overall plotting theme
+
+## A simple boxplot
+
+- What values are the response variable? [`len`]{.fragment .fade-in}
+- What values are the predictor variable? [Either `dose` or `supp`]{.fragment .fade-in}
+
+. . .
+
+- Let's start putting `dose` on the x-axis
+
+## A simple boxplot
+
+```{r ggplot-init}
+#| fig-width: 4.5
+#| fig-height: 4.5
+#| fig-align: 'left'
+#| output-location: column-fragment
+ggplot(
+    data = pigs,
+    mapping = aes(x = dose, y = len)
+)
+```
+
+. . . 
+
+- We specified the values to be placed on `x` and `y` $\implies$ axes were drawn
+    + Defined as *aesthetic mappings* using `aes()`
+    
+. . .    
+    
+- **We haven't added any geometry so none is drawn**
+
+## A simple boxplot
+
+- Geometry is added by
+     1. Placing a `+` at the end of the first line
+     2. Calling a `geom_*` function, e.g. `geom_boxplot()`
+     
+. . .
+
+```{r pigs-gg-boxplot}
+#| fig-width: 4.5
+#| fig-height: 4.5
+#| fig-align: 'left'
+#| output-location: column
+ggplot(
+    data = pigs, 
+    mapping = aes(x = dose, y = len)
+) +
+  geom_boxplot()
+```
+
+::: {.notes}
+Any mappings provided to `aes()` in the initial call are passed to subsequent `geom_*` functions
+:::
+
+
+## Using Colours
+
+- We can add more mappings to `aes()`
+    + Show the supplement method as the boxplot fill
+     
+```{r pigs-gg-boxplot-fill}
+#| fig-width: 5
+#| fig-height: 4.5
+#| fig-align: 'left'
+#| output-location: column
+ggplot(
+    data = pigs, 
+    mapping = aes(x = dose, y = len, fill = supp)
+) +
+  geom_boxplot()
+```
+
+## Using Colours
+
+- We can change the palette using `scale_fill_*`
+     
+```{r pigs-gg-boxplot-scale-fill}
+#| fig-width: 5
+#| fig-height: 4.5
+#| fig-align: 'left'
+#| output-location: column
+ggplot(
+    data = pigs, 
+    mapping = aes(x = dose, y = len, fill = supp)
+) +
+  geom_boxplot() +
+  scale_fill_brewer(palette = "Set2")
+```
+
+## `scale_fill_*()`
+
+:::: {style="font-size:95%"}
+
+- There are multiple options for defining colour palettes (i.e. scales)
+    - `scale_fill_discrete()` is applied by default
+    - `scale_fill_viridis_d()` (`_d` for discrete)
+    - `scale_fill_grey()`
+    - `scale_fill_manual()`
+    - ...
+    
+::: {.fragment}
+
+- We will explore more of these as we learn more
+    + Difference between *discrete* & *continuous* values is important
+- Colour/Fill palettes:
+    + `colour` is for shape outlines 
+    + `fill` is for filled shapes
+    
+:::
+
+::::
+
+::: {.notes}
+Hadley Wickham is from NZ so he uses the correct spelling of colour
+ggplot2 can recognise both...
+:::
+
+## Using Existing Themes
+
+- We can get rid of the horrible grey background using a `theme()`
+     
+
+```{r pigs-gg-boxplot-theme-bw}
+#| fig-width: 5
+#| fig-height: 4.5
+#| fig-align: 'left'
+#| output-location: column
+ggplot(
+  pigs, aes(x = dose, y = len, fill = supp)
+) +
+  geom_boxplot() +
+  scale_fill_brewer(palette = "Set2") +
+  theme_bw()
+```
+
+## `theme_bw()`
+
+- `theme_bw()` is my default for how plots look
+    + `theme_grey()` is the default
+    + Other complete themes: `theme_classic()`, `theme_minimal()`
+- Adding `theme()` can modify the overall layout
+    + `legend.position`, `legend.justiication`
+    + `axis.text`, `axis.tixks`
+    + `panel.background`
+- Very powerful and we'll explore more later
+
+
+## Labels
+
+- Tidy up labels for aesthetic mappings
+
+
+```{r pigs-gg-boxplot-labs}
+#| fig-width: 5
+#| fig-height: 4.5
+#| fig-align: 'left'
+#| output-location: column
+ggplot(
+  pigs, aes(x = dose, y = len, fill = supp)
+) +
+  geom_boxplot() +
+  scale_fill_brewer(palette = "Set2") +
+  labs(
+    x = "Vitamin C Dose", 
+    y = "Odontoblast Length (pm)", 
+    fill = "Method"
+  ) +
+  theme_bw() 
+```
+
+## Facets
+
+- We could even show each method in it's own panel (i.e. facet)
+
+```{r pigs-gg-boxplot-facet}
+#| fig-width: 5
+#| fig-height: 4.5
+#| fig-align: 'left'
+#| output-location: column
+ggplot(
+  pigs, aes(x = dose, y = len, fill = supp)
+) +
+  geom_boxplot() +
+  facet_wrap(~supp) +
+  scale_fill_brewer(palette = "Set2") +
+  labs(
+    x = "Vitamin C Dose", 
+    y = "Odontoblast Length (pm)", 
+    fill = "Method"
+  ) +
+  theme_bw() 
+```
+
+::: {.notes}
+- We have easily crated a complex, highly cutsomised plot
+- Much of this is near impossible with `base` plotting
+:::
+
+# Different Geometries {background-color="#3c3c44"}
+
+## `geom_*()`
+
+::: {.incremental}
+
+- Multiple options for geometry exist
+    + Points: `geom_point()`, `geom_jitter()`
+    + Bar-plots: `geom_col()`, `geom_bar()`
+    + Boxplots: `geom_boxplot()`, `geom_violin()`
+    + Distributions: `geom_density()`, `geom_histogram()`
+    + Lines: `geom_line()`, `geom_path()`
+    + Straight Lines: `geom_abline()`,` geom_hline()`, `geom_vline()`
+    + Short Line Segments: `geom_errorbar()`, `geom_segment()`
+    + Text: `geom_text()`, `geom_label()`
+    + Heatmaps: `geom_rect()`, `geom_raster()`, `geom_tile()`
+    
+:::
+
+::: {.notes}
+Our data will often demand a certain geometry
+:::
+    
+## Overlaying points
+
+- Add `geom_point()` with some transparency (alpha) to the boxplot fill
+    + Will be drawn before the boxplot (i.e. in order of the code)
+  
+```{r pigs-gg-boxplot-points}
+#| fig-width: 5
+#| fig-height: 4.5
+#| fig-align: 'left'
+#| output-location: column
+ggplot(
+  pigs, aes(x = dose, y = len, fill = supp)
+) +
+  geom_point() +
+  geom_boxplot(alpha = 0.7) +
+  facet_wrap(~supp) +
+  scale_fill_brewer(palette = "Set2") +
+  labs(
+    x = "Vitamin C Dose", 
+    y = "Odontoblast Length (pm)", 
+    fill = "Method"
+  ) +
+  theme_bw() 
+```
+  
+## Overlaying points
+
+- `geom_jitter()` is `geom_point()` with a bit of noise added
+    + width & height control x & y noise respectively
+
+```{r pigs-gg-boxplot-jitter}
+#| fig-width: 5
+#| fig-height: 4.5
+#| fig-align: 'left'
+#| output-location: column
+ggplot(
+  pigs, aes(x = dose, y = len, fill = supp)
+) +
+  geom_jitter(width = 0.1, height = 0) +
+  geom_boxplot(alpha = 0.7) +
+  facet_wrap(~supp) +
+  scale_fill_brewer(palette = "Set2") +
+  labs(
+    x = "Vitamin C Dose", 
+    y = "Odontoblast Length (pm)", 
+    fill = "Method"
+  ) +
+  theme_bw() 
+```
+
+# Additional Comments {background-color="#3c3c44"}
+
+## Categorical Variables
+
+- `dose` and `supp` are categorical variables (i.e. discrete)
+    + Known in `R` as `factors`
+    + By default, levels are assigned in alphabetic order
+    + We'll learn more about these in the next section
+
+## NB
+
+- `ggplot` is the function
+- `ggplot2` is the package name
+
+. . .
+
+- Hadley started with `ggplot` as the package name 
+    + Abandoned and rewrote as `ggplot2` during his PhD
+    + Probably would've done things differently in hindsight
+- The package `ggplot` is not publicly available
+
+## Conclusion
+
+- Beyond the first boxplot <br>$\implies$ can be very difficult to draw using `base`/`graphics`
+- The dataset determines what geometry is appropriate
+- Highly customisable plots
+    + Colour/Fill palettes
+    + Scales for axes can be log transformed, trimmed etc
+    + Themes control overall appearance
+- All take a while to learn
+    + Practice, practice, practice
+    + The *R Graphics Cookbook* is a free online resource ([here](https://r-graphics.org/))
+

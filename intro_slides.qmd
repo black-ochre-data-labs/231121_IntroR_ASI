@@ -374,5 +374,3 @@ x > 1
 
 - A common strategy is to record our code as an *R Script*
 - `R Studio` makes that easy & convenient
-    
-    

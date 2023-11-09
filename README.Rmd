@@ -39,6 +39,7 @@ All data for the session is available [here](data.zip).
 |               | RStudio & R Scripts      | [RStudio](rstudio.html)         | `r getTiming("rstudio_slides.qmd", 1, -1)` |
 |               | Bringing Data Into R     | [Data Import](data_import.html) | `r getTiming("import_slides.qmd", 1.5, -1)` |
 | 10:30 - 11:00 | Morning Tea Break       |                                 | 30min |
-| 11:00 - 13:00 | Brninging Data Into R (cont.) |  | 15min |
+| 11:00 - 13:00 | Bringing Data Into R (cont.) |  | 15min |
+|               | Simple Visualisations | [Introduction to `ggplot2`](basic_ggplot2.html) | `r getTiming("import_slides.qmd", 1.5, -1)` |
 
 ## Wednesday November 22nd

@@ -637,4 +637,3 @@ for (i in 1:5) print(sqrt(x[i]))
 - In reality, often dealing with thousands or millions of values
 :::
     
-    
