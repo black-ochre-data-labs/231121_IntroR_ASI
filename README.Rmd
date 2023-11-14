@@ -44,3 +44,7 @@ All data for the session is available [here](data.zip).
 |               | Working With Text     | [Working With Text](text.html) | `r getTiming("text_slides.qmd", 1.5, -1)` |
 
 ## Wednesday November 22nd
+
+|     | Topic | Notes | Estimated Duration |
+|:--- |:----- |:----- | ------------------:|
+| 9:00 - 10:30  | Working With Spreadsheet-like Data | [Tidying Data Frames](spreadsheets.html)      | `r getTiming("spreadsheet_slides.qmd", 1.5, -1)`   |

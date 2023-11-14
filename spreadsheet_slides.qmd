@@ -1,0 +1,862 @@
+---
+title: "Spreadsheet-Like Data"
+subtitle: "ASI: Introduction to R"
+author: "Dr Stevie Pederson"
+institute: |
+  | Black Ochre Data Labs
+  | Telethon Kids Institute
+date: "2023-11-21"
+date-format: long
+title-slide-attributes:
+    data-background-color: "#3c3c44"
+    data-background-image: assets/bodl_logo_white_background.jpg
+    data-background-opacity: "0.3"
+    data-background-size: "90%"
+editor: source
+format: 
+  revealjs:
+    theme: [custom.scss]
+    code-line-numbers: false
+    width: 1024
+    height: 768
+    sansfont: Times New Roman
+    logo: assets/bodl_logo_white_background.jpg
+    slide-number: c/t
+    show-slide-number: all       
+  html: 
+    output-file: spreasheet.html
+    embed-resources: true
+    toc: true
+    toc-depth: 1
+include-after: |
+  <script type="text/javascript">
+    Reveal.on('ready', event => {
+      if (event.indexh === 0) {
+        document.querySelector("div.has-logo > img.slide-logo").style.display = "none";
+      }
+    });
+    Reveal.addEventListener('slidechanged', (event) => {
+      if (event.indexh === 0) {
+        Reveal.configure({ slideNumber: null });
+        document.querySelector("div.has-logo > img.slide-logo").style.display = "none";
+      }
+      if (event.indexh === 1) { 
+        Reveal.configure({ slideNumber: 'c' });
+        document.querySelector("div.has-logo > img.slide-logo").style.display = null;
+      }
+    });
+  </script>
+knitr: 
+  opts_chunk: 
+    echo: true
+    include: true
+    warning: false
+    message: false
+    fig.align: center
+---
+
+```{r setwd, echo=FALSE}
+knitr::opts_chunk$set(results = "hide")
+```
+
+
+# Tidying<br>Spreadsheet-Like<br>Data {background-color="#3c3c44" background-image=https://www.tidyverse.org/images/hex-tidyverse.png background-size="30%" background-opacity="0.4" background-position="67% 50%"}
+
+## Section Setup
+
+- Clear your `R` Environment
+- Create a new script called 'TidyingData.R'
+- Load the tidyverse
+
+```{r}
+library(tidyverse)
+```
+
+. . .
+
+<br>We'll cover:
+
+- More challenging data importing
+- `SQL-` and `Excel-`like functions in `dplyr`
+- Pivoting and manipulating using `tidyr`
+
+## Importing Data
+
+- We'll use a new dataset for this section: `data/transport.csv`
+- Open a Preview using your favourite method *before* we import into `R`
+
+::: {.incremental}
+
+- Note a few challenges here:
+    + Two idiots have put comments at the top of the file
+    + There are no column names
+    + The first column appears to just be the row numbers
+    
+:::
+    
+## Importing Data
+
+Planning the import:
+
+::: {.incremental}
+
+- How do we handle the comments? 
+    + Check the help page (`?read_csv`)
+    + `comment = ""` can tell `read_csv()` which lines are comments
+- How do we handle the missing `col_names`?
+    + We can provide a character vector of column names
+- Can we skip the first column?
+    + Yes, we can tell `read_csv` what data type is in each column
+    + Also allows us to skip columns
+
+:::
+
+
+## Importing Data
+
+- By constructing our code carefully <br> $\implies$ import this file as many times as we want
+- We have:
+    1. Set `comment = "#"` to skip lines beginning with `#`
+    2. Provided a vector of appropriate column names
+    3. Asked `read_csv()` to skip the first column (`"-ccnnc"`)<br>$\implies$ defined column types as 'skip', 'character', 'character', 'numeric', 'numeric', 'character'
+
+```{r load-transport}
+cols <- c("gender", "name", "weight", "height", "method")
+transport <- read_csv(
+  "data/transport.csv",
+  comment = "#", col_names = cols, col_types = "-ccnnc"
+)
+```
+
+. . .
+
+So we have a `r nrow(transport)` x `r ncol(transport)` `data frame`
+
+```{r}
+glimpse(transport)
+```
+
+
+## Logical Tests
+
+- Before we start to explore `transport` $\implies$ **Logical Tests**
+
+::: {.incremental}
+
+- Is Equal To: `==`
+- Not equal: `!=`
+- Or: `|`
+- And: `&`
+- Less than: `<`
+- Less than or equal: `<=`
+
+:::
+
+## Logical Tests
+
+```{r, results='hide'}
+x <- c(1:5, NA)
+x == 5
+x != 5
+x > 3
+x > 3 | x == 2
+is.na(x)
+```
+
+. . .
+
+Can also return which positions within a logical vector are `TRUE`
+
+```{r}
+transport$height > 180
+which(transport$height > 180)
+```
+
+
+# The package <br>`dplyr` {background-color="#3c3c44" background-image=https://swag.rstudio.com/uploads/1/3/1/3/131335021/s815253891256106552_p2_i4_w660.png background-size="35%" background-opacity="0.5" background-position="70% 50%"}
+
+## Working with `tibble` Objects
+
+- Conventional subsetting and explorations <br>$\implies$ mostly square brackets along with `subset()`
+
+. . .
+
+```{r, results='markup'}
+## Just get the first 4 rows
+transport[1:4, ]
+```
+
+. . .
+
+```{r, results='markup'}
+## The weight & height columns only (could also use numeric position)
+transport[, c("weight", "height")]
+```
+
+
+## Using `dplyr`
+
+- `dplyr` is a core `tidyverse` package
+    + Was a *game-changer* upon release
+- Inspired by SQL operations
+- Uses similar function names to SQL 
+
+. . .
+
+- So do lots of other packages
+    + Quite easy to side-step these issues if you know how...
+
+## Starting with `dplyr::select()` 
+
+- The function `select()` allows you to select columns by name
+    + Quoting column names is often optional in the `tidyverse`
+- The `tibble` must be given as the first argument
+    + Defined in the help page as `.data`
+
+```{r}
+select(transport, gender, name, weight)
+```
+
+. . .
+
+Or by position
+
+```{r}
+select(transport, 1:3)
+```
+
+. . .
+
+<br>
+
+- **NB: We have not modified the original object!**
+    + Only when we use the `<-` symbol
+
+## Starting with `dplyr::select()` 
+
+- We can also remove columns using the minus (`-`) sign
+
+```{r}
+select(transport, -2)
+select(transport, -name)
+```
+
+<br>
+
+__Discuss: Would removing by name or position by the best?__
+
+::: {.notes}
+If we remove by name and the column has already been removed, we will get an error
+:::
+
+
+## Starting with `dplyr::select()` 
+
+The `select()` function has a few helper functions
+
+```{r}
+select(transport, ends_with("ght"))
+```
+
+. . .
+
+- `starts_with()`, `ends_with()`, `contains()`, `matches()`
+    + All take a single text string to match amongst column names
+    
+. . .    
+    
+- `one_of()`, `any_of()`, `all_of()` 
+    + Take a character vector listing column names
+
+
+```{r dplyr-select-helpers, eval = FALSE}
+select(transport, contains("t"))
+select(transport, any_of(c("name", "not_here")))
+select(transport, all_of(c("name", "not_here")))
+```
+
+## Starting with `dplyr::select()`
+
+    
+- `everything()`, `last_col()`
+    + Very helpful for re-ordering columns
+
+```{r}
+select(transport, name, everything())
+```
+
+. . . 
+
+- All helpers are in the package `tidyselect` (always loaded by `dplyr`)
+
+## Selecting Rows with `dplyr::slice()`
+
+- We can choose *columns by name or position* using `select()`
+- `tibble` objects *have no rownames*
+- Can only select rows using *position*, or *filtering by value*
+
+. . .
+
+- `slice()` is similar to selecting rows using the square brackets
+
+```{r}
+slice(transport, 1:4)
+```
+
+. . .
+
+- No need for consecutive rows
+
+```{r}
+slice(transport, c(1, 10, 15))
+```
+
+
+
+## Using `dplyr::filter()` 
+
+- We can use our logical tests to filter the data
+    + Returns rows based on values
+- Again we need to specify the `tibble` as the first argument
+
+```{r}
+filter(transport, method == "car")
+filter(transport, method == "car", gender == "female")
+```
+
+. . .
+
+- Using two queries with a comma is the same as typing `&`
+    + Queries are executed in order
+
+::: {.notes}
+We'll fix those weird gender entries very soon
+:::
+
+## Using `dplyr::arrange()` 
+
+We can sort on one or more columns
+
+```{r}
+arrange(transport, height)
+arrange(transport, method, height)
+```
+
+. . .
+
+<br>We can change to descending order using `desc()`
+
+```{r}
+arrange(transport, desc(height))
+```
+
+# Combining <br>Functions {background-color="#3c3c44" background-image=https://magrittr.tidyverse.org/logo.png background-size="35%" background-opacity="0.5" background-position="70% 50%"}
+
+```{r reset-results-to-visible, echo = FALSE}
+knitr::opts_chunk$set(results = "markup")
+```
+
+
+## Combining Functions
+
+- This is where `dplyr` and the `tidyverse` steps up a gear
+- We can chain functions together using `|>`
+- This behaves like a pipe (`|`) in the bash shell
+- Originally introduced as `%>%` from the package `magrittr`
+    + `|>` Added to `base` in R v4.2.0
+    + Older code may contain `%>%`
+    + (My current code still contains `%>%`)
+
+. . .
+
+> `|>` places the **output of the a function** as the **first argument** of the next function!
+
+
+
+::: {.notes}
+- Apparently `|>` has some advantages, but I haven't figured them out yet
+- I understand the nuances of `%>%` so am sticking with it
+:::
+
+## Combining Functions
+
+Both of these are identical in their results
+
+:::: {.columns}
+
+::: {.column}
+
+```{r}
+filter(transport, method == "bike")
+```
+
+:::
+
+::: {.column}
+
+```{r}
+transport |> filter(method == "bike")
+```
+
+:::
+
+::::
+
+
+
+## Combining Functions
+
+Now we can perform [multiple operations]{.underline}!
+
+```{r}
+transport |> filter(method == "bike") |> arrange(weight)
+```
+
+. . .
+
+- There is __no limit__ to the number of operations you can chain together
+- We are interacting with `transport` "on the fly" $\implies$ not modifying the object
+
+::: {.notes}
+Also note that we have not modified our original data frame
+:::
+
+## For the technically minded 
+
+:::: {style="font-size:95%"}
+
+1. Each function in `dplyr` takes a `data.frame` as the first argument
+2. Each function returns a `data.frame`
+
+```{r}
+#| output-location: column
+transport |> 
+  filter(method == "bike") |> 
+  arrange(height)
+```
+
+::: {.fragment}
+
+1. `|>` placed `transport` into the first argument of `filter()`
+2. The output of `filter()` was a `data.frame` <br>$\implies$ became the first argument to `arrange()`
+
+::: 
+
+::::
+
+## Using `dplyr::mutate()`
+
+We can add extra columns using `mutate()`
+
+```{r}
+transport |> mutate(height_m2 = (height/100)^2)
+```
+
+
+## Using `dplyr::mutate()`
+
+Once we've added a column, we can refer to it by name and keep adding
+
+```{r}
+transport |> 
+  mutate(
+    height_m2 = (height/100)^2, 
+    BMI = weight / height_m2
+  )
+```
+
+## Using `dplyr::mutate()`
+
+We can also modify existing columns *in place*
+
+```{r}
+transport |> mutate(height = height/100)
+```
+
+. . .
+
+<br>
+__Have we changed the original__ `object` yet?
+
+## Using `dplyr::rename()`
+
+Can use the function `rename()`
+
+```{r}
+transport |> rename(height_cm = height)
+```
+
+## Using `dplyr::rename()`
+
+Now we can go crazy with multiple processes
+
+```{r}
+transport |>
+  rename(height_cm = height) |>
+  mutate(
+      height_m2 = (height_cm/100)^2, 
+      BMI = weight / height_m2
+  ) |>
+  filter(BMI > 25)
+```
+
+. . .
+
+NB: *We have never modified our original data object once imported!*
+
+## Combining with `case_when()`
+
+- This is how we can tidy our strange values in the `gender` column
+    + First check what is there
+    + `pull()` grabs a single column as a vector (like `$`)
+
+```{r}
+transport |>
+    pull("gender") |>
+    table()
+```
+
+::: {.incremental}
+
+- We should use the majority coding format $\implies$ `female` or `male`
+    + Both `F` and `Female` $\implies$ `female`
+    + Both `M` and `Male` $\implies$ `male`
+    + This will also become a `factor` after being corrected
+    
+:::
+    
+## Combining with `case_when()`
+
+- `case_when()` performs a logical test on the LHS
+    + Replaces with the value on the RHS if `TRUE`
+
+```{r}
+transport |>
+    mutate(
+        gender = case_when(
+            gender == "F" ~ "female",
+            gender == "Female" ~ "female",
+            gender == "female" ~ "female",
+            gender == "M" ~ "male",
+            gender == "Male" ~ "male",
+            gender == "male" ~ "male"
+        )
+    ) |>
+    pull("gender") |>
+    table()
+```
+
+. . .
+
+<br>**Could we have made this shorter?**
+
+
+## Combining with `case_when()`
+
+- `case_when()` steps through conditions hierarchically
+    + Similar to a series of nested `ifelse()` statements
+    + Once `TRUE` is returned that value is excluded from future tests
+    + Don't need to reassign `"female"` or `"male"` values
+    
+. . .
+
+```{r}
+transport |>
+    mutate(
+        gender = case_when(
+            gender == "F" ~ "female",
+            gender == "Female" ~ "female",
+            gender == "M" ~ "male",
+            gender == "Male" ~ "male",
+            TRUE ~ gender # Use what's already in the `gender` column
+        )
+    ) |>
+    pull("gender") |>
+    table()
+```
+
+. . .
+
+- This final `TRUE` catches everything that hasn't yet been `TRUE`
+
+
+## Combining with `case_when()`
+
+- We could also shorten further using `str_to_lower`
+
+```{r}
+transport |>
+    mutate(
+        gender = case_when(
+            gender == "F" ~ "female",
+            gender == "M" ~ "male",
+            TRUE ~ str_to_lower(gender)
+        )
+    ) |>
+    pull("gender") |>
+    table()
+```
+
+. . .
+
+<br>I would do this during data import
+
+## Modifying an object during import
+
+- My full import code chunk might be as below:
+    + Everything is done once at import
+    + *Almost never* modify the actual object once imported
+
+```{r}
+cols <- c("gender", "name", "weight", "height", "method")
+transport <- "data/transport.csv" |>
+    read_csv(comment = "#", col_names = cols, col_types = "-ccnnc") |>
+    mutate(
+        
+        ## Correct erroneous gender encoding, then set as a factor
+        gender = case_when(
+            gender == "F" ~ "female",
+            gender == "M" ~ "male",
+            TRUE ~ str_to_lower(gender)
+        ),
+        gender = as.factor(gender),
+        
+        ## Set method as a factor
+        method = factor(method, levels = c("car", "bike")),
+        
+        ## Calculate BMI
+        BMI = weight / (0.01 * height) ^ 2
+    )
+```
+
+::: {.notes}
+- Note that we manually set the factor levels for the method, but went with alphanumeric for gender
+- We also imported, found the problem, then modified our import code
+    + This is a common strategy $\implies$ load then fix
+:::
+
+## Getting Summaries
+
+We can get summaries for entire columns
+
+```{r}
+transport |> 
+  summarise(
+      mn_weight = mean(weight),
+      mn_height = mean(height),
+      mn_bmi = mean(BMI)
+  )
+```
+
+## Getting Summaries
+
+We can group categorical variables by their levels
+
+```{r}
+transport |>
+  summarise(
+      mn_weight = mean(weight),
+      mn_height = mean(height), 
+      mn_bmi = mean(BMI),
+      .by = gender
+  )
+```
+
+
+## Getting Group Summaries
+
+Or combinations of levels
+
+```{r}
+transport |>
+  summarise(
+      mn_weight = mean(weight),
+      mn_height = mean(height), 
+      mn_bmi = mean(BMI),      
+      .by = c(gender, method)
+  )
+```
+
+. . .
+
+<br>Can use any function that spits out a single value e.g. `sd()`, `min()`, `median()`
+
+## Getting Group Summaries
+
+Count how many entries in each combination using `n()`
+
+```{r}
+transport |>
+    summarise(
+        n = n(),
+        mn_weight = mean(weight),
+        mn_height = mean(height), 
+        mn_bmi = mean(BMI),      
+        .by = c(gender, method)
+    )
+```
+
+# Applying Functions Across Multiple Columns {background-color="#3c3c44"}
+
+## Applying Functions Across Multiple Columns
+
+- Use the helper function `across()`
+- Can apply `starts_with()`, `ends_with()`, `contains()` syntax to select variables/columns
+- Pass a function to the `.fns` argument
+    
+## Applying Functions Across Multiple Columns
+
+```{r}
+transport |>
+    summarise(
+        across(.cols = ends_with("ght"), .fns = mean),
+        .by = c(gender, method)
+    )
+```
+
+## Applying Multiple Functions
+
+- We can pass multiple functions to multiple columns
+    + Naming these functions makes the output clearer
+    + Function name is appended to the end of the column name
+
+```{r}
+transport |>
+  summarise(
+    n = n(),
+    across(ends_with("ght"), .fns = c(mn = mean, sd = sd)),
+    .by = c(gender, method)
+  )
+```
+
+# Combining Data Frames {background-color="#3c3c44"}
+
+## Combining Data Frames
+
+`dplyr` has some very useful functions for combining `data.frame` objects
+
+- `bind_rows()` and `bind_cols()`
+- `left_join()`, `right_join()` and `full_join()`
+
+<!-- Amazingly, we've just had data from `Tony` and he's a 83kg car-driver, who is 177.3cm tall. -->
+
+<!-- - We can manually create a `tibble` just for him -->
+
+<!-- ## Combining Data Frames -->
+
+<!-- ```{r} -->
+<!-- tony <- tibble( -->
+<!--   gender = "male", -->
+<!--   name = "Tony", -->
+<!--   weight = 83, -->
+<!--   height = 177.3, -->
+<!--   method = "car" -->
+<!-- ) -->
+<!-- ``` -->
+
+<!-- We can add his data using `bind_rows()` -->
+
+<!-- ```{r} -->
+<!-- bind_rows(tony, transport) -->
+<!-- ``` -->
+
+
+## Combining Data Frames
+
+```{r}
+#| output-location: fragment
+contacts <- read_csv("data/contacts.csv", col_types = "cc")
+glimpse(contacts)
+glimpse(transport)
+```
+
+
+## Combining Data Frames 
+
+**Do these objects look compatible?**
+
+::: {.incremental}
+
+- Some may be missing in one of the objects
+- The values in the `name` column look similar
+- In a different order
+
+[**How do we combine these?**]{.fragment .fade-in}
+
+:::
+
+## `dplyr::left_join()`
+
+- We can use the first `tibble` as the template: `left_join()`
+
+```{r}
+left_join(transport, contacts, by = "name")
+```
+
+. . .
+
+- `name` entries missing from `contacts` will become `NA` in `contact`
+
+```{r}
+transport |> left_join(contacts, by = "name") |> filter(is.na(contact))
+```
+
+
+## `dplyr::right_join()`
+
+- We can use the second object as the template: `right_join()`
+
+```{r}
+transport |> 
+    right_join(contacts, by = "name") |>
+    tail()
+```
+
+- Any fields missing from `transport` will become `NA` where missing
+
+## `dplyr::full_join()`
+
+- Combine everything using `full_join()`
+
+```{r}
+transport |>
+    full_join(contacts, by = "name") |>
+    filter(is.na(gender) | is.na(contact))
+```
+
+. . .
+
+Will be missing values in both directions
+
+## The `tidyverse`
+
+- The packages `dplyr`, `ggplot2` and `readr` are used in most workflows
+- Additional near-essential packages: `tidyr` and `forcats`
+- All can be loaded with `library(tidyverse)`
+    + A few less obvious packages like `purrr` are also loaded
+    
+. . .
+
+Nearly **all** my analyses start with `library(tidyverse)`
+
+
+## Conflicting Function Names
+
+- Many functions in `dplyr` were inspired by SQL
+    + Some function names have been used by multiple packages
+    + `select()` and `filter()` are most heavily used
+- If a weird error occurs, add the package name before the function
+    + `dplyr::select()` or `dplyr::filter()`
+    + Calls the function `select()` from the namespace (i.e. package) `dplyr`
+    + I [always]{.underline} do this for both functions as a habit
+    
+## Conflicting Function Names
+
+- One other package with a function called `select` is `GO.db`
+    
+```{r, eval = TRUE, echo = TRUE, warning=TRUE, error=TRUE, include=TRUE}
+library(GO.db)
+transport |> select(gender)
+transport |> dplyr::select(gender)
+```
+

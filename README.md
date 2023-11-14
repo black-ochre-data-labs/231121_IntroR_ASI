@@ -32,3 +32,7 @@ All data for the session is available [here](data.zip).
 |               | Working With Text            | [Working With Text](text.html)                  |              40min |
 
 ## Wednesday November 22nd
+
+|              | Topic                              | Notes                                    | Estimated Duration |
+|:-------------|:-----------------------------------|:-----------------------------------------|-------------------:|
+| 9:00 - 10:30 | Working With Spreadsheet-like Data | [Tidying Data Frames](spreadsheets.html) |              70min |
