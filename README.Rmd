@@ -48,3 +48,4 @@ All data for the session is available [here](data.zip).
 |     | Topic | Notes | Estimated Duration |
 |:--- |:----- |:----- | ------------------:|
 | 9:00 - 10:30  | Working With Spreadsheet-like Data | [Tidying Data Frames](spreadsheets.html)      | `r getTiming("spreadsheet_slides.qmd", 1.5, -1)`   |
+|  | Advanced plotting | [Advanced Plotting](advanced_ggplot.html)      | `r getTiming("advanced_ggplot_slides.qmd", 1.5, -1)`   |
