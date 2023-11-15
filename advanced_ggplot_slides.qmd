@@ -70,7 +70,7 @@ We've already learned a huge amount:
 
 1. Importing Data using `readr`
 2. Making plots with `ggplot2`
-3. Working with (character) vectors 
+3. Working with vectors & categorical variables (factors) 
 4. Logical tests
 4. Using `dplyr` with spreadsheet-like data
 5. Joining functions together with `|>`
@@ -80,9 +80,9 @@ We've already learned a huge amount:
 ::: {.fragment}
 
 - Next we'll:
-    + Use everything to make more detailed figures
-    + Perform a few analyses
-    + Utilise some features of `tidyr`
++ Use everything to make more detailed figures
++ Perform a few analyses
++ Utilise some features of `tidyr`
 
 :::
 
@@ -96,7 +96,7 @@ We've already learned a huge amount:
 2. Start a new `R` script: `AdvancedPlotting.R`
 3. Load the `tidyverse`
 4. Define a default `ggplot2` theme
-5. Import Transport
+5. Import Transport as previously
 
 :::
 
@@ -106,27 +106,27 @@ We've already learned a huge amount:
 library(tidyverse)
 theme_set(theme_bw())
 cols <- c(
-    "gender", "name", "weight", "height", "method"
+  "gender", "name", "weight", "height", "method"
 )
 transport <- "data/transport.csv" |>
-    read_csv(
-        comment = "#",
-        col_names = cols, 
-        col_types = "-ccnnc"
-    ) |>
-    mutate(
-        gender = case_when(
-            gender == "F" ~ "female",
-            gender == "M" ~ "male",
-            TRUE ~ str_to_lower(gender)
-        ),
-        gender = as.factor(gender),
-        method = factor(
-            method, 
-            levels = c("car", "bike")
-        ),
-        BMI = weight / (0.01 * height) ^ 2
-    )
+  read_csv(
+    comment = "#",
+    col_names = cols, 
+    col_types = "-ccnnc"
+  ) |>
+  mutate(
+    gender = case_when(
+      gender == "F" ~ "female",
+      gender == "M" ~ "male",
+      TRUE ~ str_to_lower(gender)
+    ),
+    gender = as.factor(gender),
+    method = factor(
+      method, 
+      levels = c("car", "bike")
+    ),
+    BMI = weight / (0.01 * height) ^ 2
+  )
 ```
 
 :::
@@ -144,9 +144,9 @@ transport <- "data/transport.csv" |>
 ## Visualising Our Data
 
 - What might we like to show?
-    + Relationship between weight & height?
-    + Association with transportation method
-    + Distributions of BMI?
++ Relationship between weight & height?
++ Association with transportation method
++ Distributions of BMI?
 
 ## A Simple X-Y Plot
 
@@ -157,15 +157,14 @@ transport <- "data/transport.csv" |>
 #| fig-width: 5.5
 #| fig-height: 5
 transport |>
-    ggplot(aes(height, weight)) +
-    geom_point()
+  ggplot(aes(height, weight)) +
+  geom_point()
 ```
 
 ## Adding Lines of Best Fit
 
 - Sometimes a regression line can be informative
-    + `geom_smooth()` guesses the best line
-    + `method = 'loess'` isn't that great here
++ `geom_smooth()` guesses the best line
 
 
 ```{r transport-loess}
@@ -173,16 +172,16 @@ transport |>
 #| fig-width: 5.5
 #| fig-height: 5
 transport |>
-    ggplot(aes(height, weight)) +
-    geom_point() +
-    geom_smooth()
+  ggplot(aes(height, weight)) +
+  geom_point() +
+  geom_smooth()
 ```
 
 ## Adding Regresion Lines
 
 - We can choose a linear regression line: `method = "lm"`
-    + We fit linear regression in `R` using the function `lm()`
-    + Hide the standard error of the regression line: `se = FALSE`
++ Fits linear regression in `R` using the function `lm()`
++ Hide the standard error of the regression line: `se = FALSE`
 
 
 ```{r transport-lm}
@@ -190,18 +189,18 @@ transport |>
 #| fig-width: 5.5
 #| fig-height: 5
 transport |>
-    ggplot(aes(height, weight)) +
-    geom_point() +
-    geom_smooth(method = "lm", se =  FALSE)
+  ggplot(aes(height, weight)) +
+  geom_point() +
+  geom_smooth(method = "lm", se =  FALSE)
 ```
 
 ## Customising Parameters
 
 - We can change the colour of the line: `colour = "black"`
-    + Anything set inside `aes()` should be a column  in your data
-    + Anything set outside of `aes()` is be a fixed-value $\implies$ over-rides `aes()`
-    + Can also set `linetype`, `linewidth`, `alpha` etc
-    + Is `geom_*` specific
++ Anything set inside `aes()` should be a column  in your data
++ Anything set outside of `aes()` is a fixed-value $\implies$ over-rides `aes()`
++ Can also set `linetype`, `linewidth`, `alpha` etc
++ Is `geom_*` specific
 
 ## Customising Parameters
 
@@ -210,21 +209,19 @@ transport |>
 #| fig-width: 5.5
 #| fig-height: 5
 transport |>
-    ggplot(aes(height, weight)) +
-    geom_point() +
-    geom_smooth(
-        method = "lm", se =  FALSE,
-        colour = "black"
-    )
+  ggplot(aes(height, weight)) +
+  geom_point() +
+  geom_smooth(
+    method = "lm", se =  FALSE, colour = "black"
+  )
 ```
 
 
 ## Changing Shapes
 
-- Similarly for the points: `colour = "grey30"`
-    + The range of shapes is visible using `?pch`
-    + For shapes 21-25 colour is outline, fill is the internal colour
-    + Additional parameters include `size`, `alpha`
+- Similarly for the points: `colour = "red"`
++ The range of shapes is visible using `?pch`
++ Additional parameters include `size`, `alpha`
 
 
 ```{r transport-grey-points}
@@ -232,112 +229,105 @@ transport |>
 #| fig-width: 5.5
 #| fig-height: 5
 transport |>
-    ggplot(aes(height, weight)) +
-    geom_point(colour = "grey30", shape = 1) +
-    geom_smooth(
-        method = "lm", se =  FALSE,
-        colour = "black"
-    )
+  ggplot(aes(height, weight)) +
+  geom_point(colour = "red", shape = 1) +
+  geom_smooth(
+    method = "lm", se =  FALSE, colour = "black"
+  )
 ```
 
-
+::: {.notes}
+For shapes 21-25 colour is outline, fill is the internal colour
+:::
 
 ## Parameters Inside or Outside `aes()`
 
 - Parameters set outside `aes()` will over-ride anything inside `aes()`
-    + We have globally set colour to depend on `gender`
-    + This is overridden by both `geom_point()` and `geom_smooth()`
++ We have globally set colour to depend on `gender`
++ This is overridden by both `geom_point()` and `geom_smooth()`
 
 ```{r transport-override-aes}
 #| output-location: column-fragment
 #| fig-width: 5.5
 #| fig-height: 5
 transport |>
-    ggplot(
-        aes(height, weight, colour = gender)
-    ) +
-    geom_point(
-        colour = "grey30", shape = "#", size = 4
-    ) +
-    geom_smooth(
-        method = "lm", se =  FALSE,
-        colour = "black"
-    )
+  ggplot(
+    aes(height, weight, colour = gender)
+  ) +
+  geom_point(colour = "red", shape = 1) +
+  geom_smooth(
+    method = "lm", se =  FALSE, colour = "black"
+  )
 ```
 
 ## Parameters Inside or Outside `aes()`
 
 - Now remove the colour from `geom_point()`
-    + Inherits from the `aes()` within `ggplot()`
++ Inherits from the `aes()` within `ggplot()`
 
 ```{r transport-colour-gender}
 #| output-location: column-fragment
 #| fig-width: 5.5
 #| fig-height: 5
 transport |>
-    ggplot(
-        aes(height, weight, colour = gender)
-    ) +
-    geom_point(shape = "#", size = 4) +
-    geom_smooth(
-        method = "lm", se =  FALSE,
-        colour = "black"
-    )
+  ggplot(
+    aes(height, weight, colour = gender)
+  ) +
+  geom_point(shape = 1) +
+  geom_smooth(
+    method = "lm", se =  FALSE, colour = "black"
+  )
 ```
 
 ## Custom Scales
 
 - Providing specific colours can take a vector
-    + Can be named for greater control
++ Can be named for greater control
 
 ```{r transport-colour-gender-scale}
 #| output-location: column-fragment
 #| fig-width: 5.5
 #| fig-height: 5
 transport |>
-    ggplot(
-        aes(height, weight, colour = gender)
-    ) +
-    geom_point(shape = "#", size = 4) +
-    geom_smooth(
-        method = "lm", se =  FALSE,
-        colour = "black"
-    ) +
-    scale_colour_manual(
-        values = c(
-            female = "navyblue", male = "red3"
-        )
+  ggplot(
+    aes(height, weight, colour = gender)
+  ) +
+  geom_point(shape = 1) +
+  geom_smooth(
+    method = "lm", se =  FALSE, colour = "black"
+  ) +
+  scale_colour_manual(
+    values = c(
+      female = "navyblue", male = "red3"
     )
+  )
 ```
 
 ## Custom Scales
 
 - Likewise for shapes
-    + Values are applied in the same order as the legend
++ Values are applied in the same order as the legend
 
 ```{r transport-shape-gender-scale}
 #| output-location: column-fragment
 #| fig-width: 5.5
 #| fig-height: 5
 transport |>
-    ggplot(
-        aes(height, weight, colour = gender)
-    ) +
-    geom_point(
-        aes(shape = gender), size = 4
-    ) +
-    geom_smooth(
-        method = "lm", se =  FALSE,
-        colour = "black"
-    ) +
-    scale_colour_manual(
-        values = c(
-            female = "navyblue", male = "red3"
-        )
-    ) +
-    scale_shape_manual(
-        values = c("F", "M")
+  ggplot(
+    aes(height, weight, colour = gender)
+  ) +
+  geom_point(
+    aes(shape = gender), size = 4
+  ) +
+  geom_smooth(
+    method = "lm", se =  FALSE, colour = "black"
+  ) +
+  scale_colour_manual(
+    values = c(
+      female = "navyblue", male = "red3"
     )
+  ) +
+  scale_shape_manual(values = c("F", "M"))
 ```
 
 ## Adding Statistics
@@ -352,38 +342,28 @@ transport |>
 #| fig-width: 5.5
 #| fig-height: 5
 transport |>
-    ggplot(aes(height, weight)) +
-    geom_point(
-        aes(colour = gender, shape = gender),
-        size = 3
-    ) +
-    geom_smooth(
-        method = "lm", se =  FALSE,
-        colour = "black"
-    ) +
-    geom_label(
-        aes(label = label),
-        data = . %>% ## Only the magrittr works here
-            summarise(
-                cor = cor(weight, height),
-                height = mean(height),
-                ## Specify a position manually
-                # height = 165, 
-                weight = min(weight),
-            )  %>% 
-            mutate(
-                label = paste("rho ==", round(cor, 2))
-            ),
-        parse = TRUE
-    ) +
-    scale_colour_manual(
-        values = c(
-            female = "navyblue", male = "red3"
-        )
-    ) +
-    scale_shape_manual(
-        values = c("F", "M")
-    )
+  ggplot(aes(height, weight)) +
+  geom_point(
+    aes(colour = gender, shape = gender),
+    size = 3
+  ) +
+  geom_smooth(
+    method = "lm", se =  FALSE, colour = "black"
+  ) +
+  geom_label(
+    aes(label = label),
+    data = . %>% ## Only the magrittr works here
+      summarise(
+        cor = cor(weight, height),
+        height = quantile(height, 0.9),
+        weight = min(weight),
+      )  %>% 
+      mutate(label = paste("r =", round(cor, 2)))
+  ) +
+  scale_colour_manual(
+    values = c(female = "navyblue", male = "red3")
+  ) +
+  scale_shape_manual(values = c("F", "M"))
 ```
 
 :::
@@ -409,24 +389,21 @@ library(ggpmisc)
 #| fig-width: 5.5
 #| fig-height: 5
 transport |>
-    ggplot(aes(height, weight)) +
-    geom_point(
-        aes(colour = gender, shape = gender), 
-        size = 3
-    ) +
-    geom_smooth(
-        method = "lm", se =  FALSE,
-        colour = "black"
-    ) +
-    stat_poly_eq(use_label("eq")) +
-    scale_colour_manual(
-        values = c(
-            female = "navyblue", male = "red3"
-        )
-    ) +
-    scale_shape_manual(
-        values = c("F", "M")
+  ggplot(aes(height, weight)) +
+  geom_point(
+    aes(colour = gender, shape = gender), 
+    size = 3
+  ) +
+  geom_smooth(
+    method = "lm", se =  FALSE, colour = "black"
+  ) +
+  stat_poly_eq(use_label("eq")) +
+  scale_colour_manual(
+    values = c(
+      female = "navyblue", male = "red3"
     )
+  ) +
+  scale_shape_manual(values = c("F", "M"))
 ```
 
 
@@ -439,25 +416,22 @@ transport |>
 #| fig-width: 6.5
 #| fig-height: 4.5
 transport |>
-    ggplot(aes(height, weight)) +
-    geom_point(
-        aes(colour = gender, shape = gender), 
-        size = 3
-    ) +
-    geom_smooth(
-        method = "lm", se =  FALSE,
-        colour = "black"
-    ) +
-    stat_poly_eq(use_label("eq")) +
-    facet_wrap(~method) +
-    scale_colour_manual(
-        values = c(
-            female = "navyblue", male = "red3"
-        )
-    ) +
-    scale_shape_manual(
-        values = c("F", "M")
+  ggplot(aes(height, weight)) +
+  geom_point(
+    aes(colour = gender, shape = gender), 
+    size = 3
+  ) +
+  geom_smooth(
+    method = "lm", se =  FALSE, colour = "black"
+  ) +
+  stat_poly_eq(use_label("eq")) +
+  facet_wrap(~method) +
+  scale_colour_manual(
+    values = c(
+      female = "navyblue", male = "red3"
     )
+  ) +
+  scale_shape_manual(values = c("F", "M"))
 ```
 
 # Modifying Data<br>Prior To Plotting {background-color="#3c3c44" background-image=https://carpentries-incubator.github.io/open-science-with-r/img/05-tidyr.png background-size="35%" background-opacity="0.4" background-position="70% 50%"}
@@ -465,29 +439,29 @@ transport |>
 ## Summary Plots
 
 - So far we've just plotted the complete dataset
-    + We did use `%>%` inside a `geom_*` to find a correlation...
++ We did use `%>%` inside a `geom_*` to find a correlation...
 
 . . .
 
 - We can also use our `tidyverse` tools to create summaries to plot
-    + E.g. Barplots of the mean with error bars
++ E.g. Barplots of the mean with error bars
 
 ## Summary Plots
 
 - To create a barplot of the mean BMI across all groups
-    + Need the mean BMI for each group
-    + Also the standard deviation
++ Need the mean BMI for each group
++ Also the standard deviation
 
 . . .
 
-    
+
 ```{r}
 transport |>
-    summarise(
-        mn_bmi = mean(BMI),
-        sd_bmi = sd(BMI),
-        .by = c(method, gender)
-    )
+  summarise(
+    mn_bmi = mean(BMI),
+    sd_bmi = sd(BMI),
+    .by = c(method, gender)
+  )
 ```
 
 ## Creating a Barplot
@@ -499,15 +473,15 @@ transport |>
 #| fig-width: 5.5
 #| fig-height: 5
 transport |>
-    summarise(
-        mn_bmi = mean(BMI), sd_bmi = sd(BMI),
-        .by = c(method, gender)
-    ) |>
-    ggplot(aes(method, mn_bmi, fill = gender)) +
-    geom_col() +
-    facet_wrap(~gender) +
-    labs(y = "Mean BMI") +
-    scale_fill_brewer(palette = "Set2") 
+  summarise(
+    mn_bmi = mean(BMI), sd_bmi = sd(BMI),
+    .by = c(method, gender)
+  ) |>
+  ggplot(aes(method, mn_bmi, fill = gender)) +
+  geom_col() +
+  facet_wrap(~gender) +
+  labs(y = "Mean BMI") +
+  scale_fill_brewer(palette = "Set2") 
 ```
 
 ## Adding Error Bars
@@ -519,42 +493,42 @@ transport |>
 #| fig-width: 5.5
 #| fig-height: 5
 transport |>
-    summarise(
-        mn_bmi = mean(BMI), sd_bmi = sd(BMI),
-        .by = c(method, gender)
-    ) |>
-    ggplot(aes(method, mn_bmi, fill = gender)) +
-    geom_col() +
-    geom_errorbar(
-        aes(
-            ymin = mn_bmi - sd_bmi,
-            ymax = mn_bmi + sd_bmi
-        ),
-        width = 0.2
-    ) +
-    facet_wrap(~gender) +
-    labs(y = "Mean BMI") +
-    scale_fill_brewer(palette = "Set2") 
+  summarise(
+    mn_bmi = mean(BMI), sd_bmi = sd(BMI),
+    .by = c(method, gender)
+  ) |>
+  ggplot(aes(method, mn_bmi, fill = gender)) +
+  geom_col() +
+  geom_errorbar(
+    aes(
+      ymin = mn_bmi - sd_bmi,
+      ymax = mn_bmi + sd_bmi
+    ),
+    width = 0.2
+  ) +
+  facet_wrap(~gender) +
+  labs(y = "Mean BMI") +
+  scale_fill_brewer(palette = "Set2") 
 ```
 
 ## Adding Error Bars
 
 - If we choose not to facet it's much trickier
-    + Let's hide the error bars to see why
++ Let's hide the error bars to see why
 
 ```{r transport-barplot-nofacet}
 #| output-location: column-fragment
 #| fig-width: 5.5
 #| fig-height: 5
 transport |>
-    summarise(
-        mn_bmi = mean(BMI), sd_bmi = sd(BMI),
-        .by = c(method, gender)
-    ) |>
-    ggplot(aes(method, mn_bmi, fill = gender)) +
-    geom_col(position = "dodge") +
-    labs(y = "Mean BMI") +
-    scale_fill_brewer(palette = "Set2") 
+  summarise(
+    mn_bmi = mean(BMI), sd_bmi = sd(BMI),
+    .by = c(method, gender)
+  ) |>
+  ggplot(aes(method, mn_bmi, fill = gender)) +
+  geom_col(position = "dodge") +
+  labs(y = "Mean BMI") +
+  scale_fill_brewer(palette = "Set2") 
 ```
 
 
@@ -571,14 +545,14 @@ transport |>
 ```{r, results='markup'}
 #| output-location: fragment
 transport |>
-    summarise(
-        mn_bmi = mean(BMI), sd_bmi = sd(BMI),
-        .by = c(method, gender)
-    ) |>
-    mutate(
-        method_int = as.integer(method),
-        gender_int = as.integer(gender)
-    )
+  summarise(
+    mn_bmi = mean(BMI), sd_bmi = sd(BMI),
+    .by = c(method, gender)
+  ) |>
+  mutate(
+    method_int = as.integer(method),
+    gender_int = as.integer(gender)
+  )
 ```
 
 ::: {.notes}
@@ -588,7 +562,7 @@ This can seem weird that we've turned a character string into numbers...
 ## Plotting with Factors
 
 - Each factor level is assigned an integer starting at 1
-    + These were how ggplot originally placed the x co-ordinates
++ These were how ggplot originally placed the x co-ordinates
 
 . . .
 
@@ -597,13 +571,13 @@ This can seem weird that we've turned a character string into numbers...
 . . .
 
 - I guesstimated that each bar had a width of 0.45
-    + The centre of each bar is `method_int` $\pm$ 0.225
++ The centre of each bar is `method_int` $\pm$ 0.225
 
 . . .
 
 - I also wish it was easier
-    + Maybe I just haven't found the right package/function yet
-    
++ Maybe I just haven't found the right package/function yet
+
 ## Plotting with Factors
 
 
@@ -611,18 +585,18 @@ This can seem weird that we've turned a character string into numbers...
 ```{r, results='markup'}
 #| output-location: fragment
 transport |>
-    summarise(
-        mn_bmi = mean(BMI), sd_bmi = sd(BMI),
-        .by = c(method, gender)
-    ) |>
-    mutate(
-        method_int = as.integer(method),
-        gender_int = as.integer(gender),
-        x = case_when(
-            gender == "female" ~ method_int - 0.225,
-            gender == "male" ~ method_int + 0.225,
-        )
+  summarise(
+    mn_bmi = mean(BMI), sd_bmi = sd(BMI),
+    .by = c(method, gender)
+  ) |>
+  mutate(
+    method_int = as.integer(method),
+    gender_int = as.integer(gender),
+    x = case_when(
+      gender == "female" ~ method_int - 0.225,
+      gender == "male" ~ method_int + 0.225,
     )
+  )
 ```
 
 
@@ -635,29 +609,29 @@ transport |>
 #| fig-width: 5.5
 #| fig-height: 5
 transport |>
-    summarise(
-        mn_bmi = mean(BMI), sd_bmi = sd(BMI),
-        .by = c(method, gender)
-    ) |>
-    mutate(
-        method_int = as.integer(method),
-        x = case_when(
-            gender == "female" ~ method_int - 0.225,
-            gender == "male" ~ method_int + 0.225,
-        )
-    ) |>
-    ggplot(aes(method, mn_bmi, fill = gender)) +
-    geom_col(position = "dodge") +
-    geom_errorbar(
-        aes(
-            x = x,
-            ymin = mn_bmi - sd_bmi,
-            ymax = mn_bmi + sd_bmi
-        ),
-        width = 0.1
-    ) +
-    labs(y = "Mean BMI") +
-    scale_fill_brewer(palette = "Set2") 
+  summarise(
+    mn_bmi = mean(BMI), sd_bmi = sd(BMI),
+    .by = c(method, gender)
+  ) |>
+  mutate(
+    method_int = as.integer(method),
+    x = case_when(
+      gender == "female" ~ method_int - 0.225,
+      gender == "male" ~ method_int + 0.225,
+    )
+  ) |>
+  ggplot(aes(method, mn_bmi, fill = gender)) +
+  geom_col(position = "dodge") +
+  geom_errorbar(
+    aes(
+      x = x,
+      ymin = mn_bmi - sd_bmi,
+      ymax = mn_bmi + sd_bmi
+    ),
+    width = 0.1
+  ) +
+  labs(y = "Mean BMI") +
+  scale_fill_brewer(palette = "Set2") 
 ```
 
 :::
@@ -665,12 +639,12 @@ transport |>
 ## Modifying Axes
 
 - That space at the bottom of the y-axis bother me
-    + By default axes expand the data by ~5% of the range
++ By default axes expand the data by ~5% of the range
 - We can control the expansion
-    + Using multiplicative scaling (continuous data)
-    + Using Additive Scaling (discrete data)
++ Using multiplicative scaling (continuous data)
++ Using Additive Scaling (discrete data)
 - The relevant function is called `expansion()`
-    + Is passed to the `expand` argument inside `scale_x/y_*()`
++ Is passed to the `expand` argument inside `scale_x/y_*()`
 
 ## Modifying Axes
 
@@ -683,33 +657,33 @@ transport |>
 #| fig-width: 5.5
 #| fig-height: 5
 transport |>
-    summarise(
-        mn_bmi = mean(BMI), sd_bmi = sd(BMI),
-        .by = c(method, gender)
-    ) |>
-    mutate(
-        method_int = as.integer(method),
-        x = case_when(
-            gender == "female" ~ method_int - 0.225,
-            gender == "male" ~ method_int + 0.225,
-        )
-    ) |>
-    ggplot(aes(method, mn_bmi, fill = gender)) +
-    geom_col(position = "dodge") +
-    geom_errorbar(
-        aes(
-            x = x,
-            ymin = mn_bmi - sd_bmi,
-            ymax = mn_bmi + sd_bmi
-        ), width = 0.1
-    ) +
-    scale_fill_brewer(
-        palette = "Set2", name = "Gender"
-    ) +
-    scale_y_continuous(
-        expand = expansion(c(0, 0.05)), 
-        name = "Mean BMI"
+  summarise(
+    mn_bmi = mean(BMI), sd_bmi = sd(BMI),
+    .by = c(method, gender)
+  ) |>
+  mutate(
+    method_int = as.integer(method),
+    x = case_when(
+      gender == "female" ~ method_int - 0.225,
+      gender == "male" ~ method_int + 0.225,
     )
+  ) |>
+  ggplot(aes(method, mn_bmi, fill = gender)) +
+  geom_col(position = "dodge") +
+  geom_errorbar(
+    aes(
+      x = x,
+      ymin = mn_bmi - sd_bmi,
+      ymax = mn_bmi + sd_bmi
+    ), width = 0.1
+  ) +
+  scale_fill_brewer(
+    palette = "Set2", name = "Gender"
+  ) +
+  scale_y_continuous(
+    expand = expansion(c(0, 0.05)), 
+    name = "Mean BMI"
+  )
 ```
 
 :::
@@ -718,20 +692,20 @@ transport |>
 
 - So far we only visualised the mean BMI values across the dataset
 - Let's try and repeat for both weight and height on the same figure
-    + May not be brilliant in reality
-    
++ May not be brilliant in reality
+
 . . .
 
 ```{r}
 #| results: markup
 transport |>
-    summarise(
-        across(
-            ends_with("ght"),
-            .fns = c(mn = mean, sd = sd)
-        ),
-        .by = c(method, gender)
-    ) 
+  summarise(
+    across(
+      ends_with("ght"),
+      .fns = c(mn = mean, sd = sd)
+    ),
+    .by = c(method, gender)
+  ) 
 ```
 
 . . .
@@ -743,46 +717,46 @@ transport |>
 
 - `pivot_longer()` enables shifting from wide to long form
 - Choose the columns to run down the page
-    + Original column names go into one column
-    + All values go into another
-    
++ Original column names go into one column
++ All values go into another
+
 . . .
 
 ```{r}
 #| results: markup
 #| output-location: column
 transport |>
-    summarise(
-        across(
-            ends_with("ght"),
-            .fns = c(mn = mean, sd = sd)
-        ),
-        .by = c(method, gender)
-    ) |>
-    pivot_longer(cols = contains("_")) 
+  summarise(
+    across(
+      ends_with("ght"),
+      .fns = c(mn = mean, sd = sd)
+    ),
+    .by = c(method, gender)
+  ) |>
+  pivot_longer(cols = contains("_")) 
 ```
 
 ## Reshaping Data
 
 - We can now `separate()` the values in `name`
-    + `into = c("stat", "type")` defines the new column names
++ `into = c("stat", "type")` defines the new column names
 
 ```{r}
 #| results: markup
 #| output-location: column
 transport |>
-    summarise(
-        across(
-            ends_with("ght"),
-            .fns = c(mn = mean, sd = sd)
-        ),
-        .by = c(method, gender)
-    ) |>
-    pivot_longer(cols = contains("_")) |>
-    separate(
-        name, into = c("stat", "type"), 
-        sep = "_"
-    )
+  summarise(
+    across(
+      ends_with("ght"),
+      .fns = c(mn = mean, sd = sd)
+    ),
+    .by = c(method, gender)
+  ) |>
+  pivot_longer(cols = contains("_")) |>
+  separate(
+    name, into = c("stat", "type"), 
+    sep = "_"
+  )
 ```
 
 ## Reshaping Data
@@ -793,22 +767,22 @@ transport |>
 #| results: markup
 #| output-location: column
 transport |>
-    summarise(
-        across(
-            ends_with("ght"),
-            .fns = c(mn = mean, sd = sd)
-        ),
-        .by = c(method, gender)
-    ) |>
-    pivot_longer(cols = contains("_")) |>
-    separate(
-        name, into = c("stat", "type"), 
-        sep = "_"
-    ) |>
-    pivot_wider(
-        names_from = "type",
-        values_from = "value"
-    )
+  summarise(
+    across(
+      ends_with("ght"),
+      .fns = c(mn = mean, sd = sd)
+    ),
+    .by = c(method, gender)
+  ) |>
+  pivot_longer(cols = contains("_")) |>
+  separate(
+    name, into = c("stat", "type"), 
+    sep = "_"
+  ) |>
+  pivot_wider(
+    names_from = "type",
+    values_from = "value"
+  )
 ```
 
 . . .
@@ -821,22 +795,22 @@ transport |>
 
 ```{r}
 summ_df <- transport |>
-    summarise(
-        across(
-            ends_with("ght"),
-            .fns = c(mn = mean, sd = sd)
-        ),
-        .by = c(method, gender)
-    ) |>
-    pivot_longer(cols = contains("_")) |>
-    separate(
-        name, into = c("stat", "type"), 
-        sep = "_"
-    ) |>
-    pivot_wider(
-        names_from = "type",
-        values_from = "value"
-    )
+  summarise(
+    across(
+      ends_with("ght"),
+      .fns = c(mn = mean, sd = sd)
+    ),
+    .by = c(method, gender)
+  ) |>
+  pivot_longer(cols = contains("_")) |>
+  separate(
+    name, into = c("stat", "type"), 
+    sep = "_"
+  ) |>
+  pivot_wider(
+    names_from = "type",
+    values_from = "value"
+  )
 ```
 
 
@@ -851,30 +825,30 @@ summ_df <- transport |>
 #| fig-width: 5.5
 #| fig-height: 5
 summ_df |>
-    mutate(
-        gender_int = as.numeric(gender),
-        x_bar = case_when(
-            method == "car" ~ gender_int - 0.225,
-            method == "bike" ~ gender_int + 0.225
-        )
-    ) |>
-    ggplot(aes(gender, mn, fill = method)) +
-    geom_col(position = "dodge") +
-    geom_errorbar(
-        aes(
-            x = x_bar,
-            ymin = mn - sd, ymax = mn + sd
-        ),
-        width = 0.2
-    )  +
-    facet_wrap(~stat, scales = "free_y") +
-    scale_fill_brewer(
-        palette = "Set2", name = "Method"
-    ) +
-    scale_y_continuous(
-        expand = expansion(c(0, 0.05)), 
-        name = c()
-    ) 
+  mutate(
+    gender_int = as.numeric(gender),
+    x_bar = case_when(
+      method == "car" ~ gender_int - 0.225,
+      method == "bike" ~ gender_int + 0.225
+    )
+  ) |>
+  ggplot(aes(gender, mn, fill = method)) +
+  geom_col(position = "dodge") +
+  geom_errorbar(
+    aes(
+      x = x_bar,
+      ymin = mn - sd, ymax = mn + sd
+    ),
+    width = 0.2
+  )  +
+  facet_wrap(~stat, scales = "free_y") +
+  scale_fill_brewer(
+    palette = "Set2", name = "Method"
+  ) +
+  scale_y_continuous(
+    expand = expansion(c(0, 0.05)), 
+    name = c()
+  ) 
 ```
 
 :::
@@ -890,32 +864,32 @@ summ_df |>
 #| fig-width: 5.5
 #| fig-height: 5
 summ_df |>
-    mutate(
-        gender_int = as.numeric(gender),
-        x_bar = case_when(
-            method == "car" ~ gender_int - 0.225,
-            method == "bike" ~ gender_int + 0.225
-        ),
-        stat = stat |>
-            str_replace("height", "Height (cm)") |>
-            str_replace("weight", "Weight (kg)")
-    ) |>
-    ggplot(aes(gender, mn, fill = method)) +
-    geom_col(position = "dodge") +
-    geom_errorbar(
-        aes(
-            x = x_bar,
-            ymin = mn - sd, ymax = mn + sd
-        ),
-        width = 0.2
-    )  +
-    facet_wrap(~stat, scales = "free_y") +
-    scale_fill_brewer(
-        palette = "Set2", name = "Method"
-    ) +
-    scale_y_continuous(
-        expand = expansion(c(0, 0.05)), name = c()
-    ) 
+  mutate(
+    gender_int = as.numeric(gender),
+    x_bar = case_when(
+      method == "car" ~ gender_int - 0.225,
+      method == "bike" ~ gender_int + 0.225
+    ),
+    stat = stat |>
+      str_replace("height", "Height (cm)") |>
+      str_replace("weight", "Weight (kg)")
+  ) |>
+  ggplot(aes(gender, mn, fill = method)) +
+  geom_col(position = "dodge") +
+  geom_errorbar(
+    aes(
+      x = x_bar,
+      ymin = mn - sd, ymax = mn + sd
+    ),
+    width = 0.2
+  )  +
+  facet_wrap(~stat, scales = "free_y") +
+  scale_fill_brewer(
+    palette = "Set2", name = "Method"
+  ) +
+  scale_y_continuous(
+    expand = expansion(c(0, 0.05)), name = c()
+  ) 
 ```
 
 :::
@@ -933,8 +907,8 @@ summ_df |>
 - The overall plot appearance can be set using `theme()`
 - A bit overwhelming, but very customisable
 - Let's save our existing plot a `p`
-    + Can be drawn again at anytime by entering `p`
-    + Can still be modified on *on-the-fly*
++ Can be drawn again at anytime by entering `p`
++ Can still be modified on *on-the-fly*
 
 :::
 
@@ -946,33 +920,33 @@ summ_df |>
 
 ```{r}
 p <- summ_df |>
-    mutate(
-        gender_int = as.numeric(gender),
-        x_bar = case_when(
-            method == "car" ~ gender_int - 0.225,
-            method == "bike" ~ gender_int + 0.225
-        ),
-        stat = stat |>
-            str_replace("height", "Height (cm)") |>
-            str_replace("weight", "Weight (kg)")
-    ) |>
-    ggplot(aes(gender, mn, fill = method)) +
-    geom_col(position = "dodge") +
-    geom_errorbar(
-        aes(
-            x = x_bar,
-            ymin = mn - sd, ymax = mn + sd
-        ),
-        width = 0.2
-    )  +
-    facet_wrap(~stat, scales = "free_y") +
-    xlab("Gender") +
-    scale_fill_brewer(
-        palette = "Set2", name = "Method"
-    ) +
-    scale_y_continuous(
-        expand = expansion(c(0, 0.05)), name = c()
-    ) 
+  mutate(
+    gender_int = as.numeric(gender),
+    x_bar = case_when(
+      method == "car" ~ gender_int - 0.225,
+      method == "bike" ~ gender_int + 0.225
+    ),
+    stat = stat |>
+      str_replace("height", "Height (cm)") |>
+      str_replace("weight", "Weight (kg)")
+  ) |>
+  ggplot(aes(gender, mn, fill = method)) +
+  geom_col(position = "dodge") +
+  geom_errorbar(
+    aes(
+      x = x_bar,
+      ymin = mn - sd, ymax = mn + sd
+    ),
+    width = 0.2
+  )  +
+  facet_wrap(~stat, scales = "free_y") +
+  xlab("Gender") +
+  scale_fill_brewer(
+    palette = "Set2", name = "Method"
+  ) +
+  scale_y_continuous(
+    expand = expansion(c(0, 0.05)), name = c()
+  ) 
 ```
 
 :::
@@ -995,9 +969,9 @@ p + ggtitle("Weight and Height Across Participants")
 ## Using Themes
 
 - Most `theme()` elements have their own modification functions
-    + text: `element_text()`
-    + lines: `element_line()`
-    + rectangles: `element_rect()`
++ text: `element_text()`
++ lines: `element_line()`
++ rectangles: `element_rect()`
 
 . . .
 
@@ -1012,15 +986,15 @@ p + ggtitle("Weight and Height Across Participants")
 ::: {style="font-size:90%"}
 
 - `hjust` controls the horizontal adjustment
-    + `hjust = 0.5` is centre-aligned
++ `hjust = 0.5` is centre-aligned
 
 ```{r weight-height-centre-title}
 #| output-location: column-fragment
 #| fig-width: 5.5
 #| fig-height: 5
 p + 
-    ggtitle("Weight and Height Across Participants") +
-    theme(plot.title = element_text(hjust = 0.5))
+  ggtitle("Weight and Height Across Participants") +
+  theme(plot.title = element_text(hjust = 0.5))
 ```
 
 :::
@@ -1036,11 +1010,11 @@ p +
 #| fig-width: 5.5
 #| fig-height: 5
 p + 
-    ggtitle("Weight and Height Across Participants") +
-    theme(
-        text = element_text(size = 14),
-        plot.title = element_text(hjust = 0.5)
-    )
+  ggtitle("Weight and Height Across Participants") +
+  theme(
+    text = element_text(size = 14),
+    plot.title = element_text(hjust = 0.5)
+  )
 ```
 
 :::
@@ -1050,19 +1024,19 @@ p +
 ::: {style="font-size:90%"}
 
 - Control legend position
-    + Doesn't need an `element_*()` function
++ Doesn't need an `element_*()` function
 
 ```{r weight-height-legend-bottom}
 #| output-location: column-fragment
 #| fig-width: 5.5
 #| fig-height: 5
 p + 
-    ggtitle("Weight and Height Across Participants") +
-    theme(
-        text = element_text(size = 14),
-        plot.title = element_text(hjust = 0.5),
-        legend.position = "bottom"
-    )
+  ggtitle("Weight and Height Across Participants") +
+  theme(
+    text = element_text(size = 14),
+    plot.title = element_text(hjust = 0.5),
+    legend.position = "bottom"
+  )
 ```
 
 :::
@@ -1078,16 +1052,16 @@ p +
 #| fig-width: 5.5
 #| fig-height: 5
 p + 
-    ggtitle("Weight and Height Across Participants") +
-    theme(
-        text = element_text(size = 14),
-        plot.title = element_text(hjust = 0.5),
-        legend.position = "bottom",
-        panel.grid = element_blank(),
-        axis.text.x = element_text(
-            angle = 90, vjust = 0.5, hjust = 1
-        )
+  ggtitle("Weight and Height Across Participants") +
+  theme(
+    text = element_text(size = 14),
+    plot.title = element_text(hjust = 0.5),
+    legend.position = "bottom",
+    panel.grid = element_blank(),
+    axis.text.x = element_text(
+      angle = 90, vjust = 0.5, hjust = 1
     )
+  )
 ```
 
 :::
@@ -1099,15 +1073,15 @@ p +
 . . .
 
 - `ggsave()` will save the last plot
-    + The file extension will determine the format
-    + Can be `png`, `jpg`, `pdf`, `svg`, `tiff` etc
-    + `width` & `height` default to inches but can be changed
-    
++ The file extension will determine the format
++ Can be `png`, `jpg`, `pdf`, `svg`, `tiff` etc
++ `width` & `height` default to inches but can be changed
+
 . . .
 
 - Getting font sizes right can be infuriating
-    + Always add the save after you create the plot
-    + Open immediately and check the font sizes
++ Always add the save after you create the plot
++ Open immediately and check the font sizes
 
 
 ## Closing Comments
@@ -1123,11 +1097,11 @@ p +
 . . .
 
 - We saved four objects
-    + `cols`, `transport`, `summ_df`, `p`
-    + The last two were only to fit the code on slides
++ `cols`, `transport`, `summ_df`, `p`
++ The last two were only to fit the code on slides
 
 . . .    
-    
+
 - This keeps a clean workspace
-    + No need for `transport`, `transport1`, `transport1_mod` etc
-    + Very beneficial for reproducibility
++ No need for `transport`, `transport1`, `transport1_mod` etc
++ Very beneficial for reproducibility

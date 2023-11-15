@@ -89,7 +89,7 @@ Please copy and paste the following where you see the `>` symbol, then hit the `
 
 
 ```{r instal, eval=FALSE}
-install.packages(c("tidyverse", "rmarkdown", "pander"))
+install.packages(c("tidyverse", "rmarkdown", "pander", "ggpmisc"))
 ```
 
 You will need an internet connection and the installation may take up to 10 minutes.
