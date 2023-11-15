@@ -5,7 +5,7 @@ author: "Dr Stevie Pederson"
 institute: |
   | Black Ochre Data Labs
   | Telethon Kids Institute
-date: "2023-11-21"
+date: "2023-11-22"
 date-format: long
 title-slide-attributes:
     data-background-color: "#3c3c44"
@@ -24,7 +24,7 @@ format:
     slide-number: c/t
     show-slide-number: all       
   html: 
-    output-file: spreasheet.html
+    output-file: spreadsheet.html
     embed-resources: true
     toc: true
     toc-depth: 1

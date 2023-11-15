@@ -1,0 +1,1133 @@
+---
+title: "Putting It All Together: Advanced Plotting"
+subtitle: "ASI: Introduction to R"
+author: "Dr Stevie Pederson"
+institute: |
+  | Black Ochre Data Labs
+  | Telethon Kids Institute
+date: "2023-11-22"
+date-format: long
+title-slide-attributes:
+    data-background-color: "#3c3c44"
+    data-background-image: assets/bodl_logo_white_background.jpg
+    data-background-opacity: "0.3"
+    data-background-size: "90%"
+editor: source
+format: 
+  revealjs:
+    theme: [custom.scss]
+    code-line-numbers: false
+    width: 1024
+    height: 768
+    sansfont: Times New Roman
+    logo: assets/bodl_logo_white_background.jpg
+    slide-number: c/t
+    show-slide-number: all        
+  html: 
+    output-file: advanced_ggplot.html
+    embed-resources: true
+    toc: true
+    toc-depth: 1
+include-after: |
+  <script type="text/javascript">
+    Reveal.on('ready', event => {
+      if (event.indexh === 0) {
+        document.querySelector("div.has-logo > img.slide-logo").style.display = "none";
+      }
+    });
+    Reveal.addEventListener('slidechanged', (event) => {
+      if (event.indexh === 0) {
+        Reveal.configure({ slideNumber: null });
+        document.querySelector("div.has-logo > img.slide-logo").style.display = "none";
+      }
+      if (event.indexh === 1) { 
+        Reveal.configure({ slideNumber: 'c' });
+        document.querySelector("div.has-logo > img.slide-logo").style.display = null;
+      }
+    });
+  </script>    
+knitr: 
+  opts_chunk: 
+    echo: true
+    include: true
+    warning: false
+    message: false
+    fig.align: center
+---
+
+```{r setwd, echo=FALSE}
+knitr::opts_chunk$set(results = "hide")
+```
+
+
+# Using the<br>Tidyverse<br>Together {background-color="#3c3c44" background-image=https://www.tidyverse.org/images/hex-tidyverse.png background-size="30%" background-opacity="0.3" background-position="70% 50%"}
+
+## Using the Tidyverse
+
+We've already learned a huge amount:
+
+::: {.incremental}
+
+1. Importing Data using `readr`
+2. Making plots with `ggplot2`
+3. Working with (character) vectors 
+4. Logical tests
+4. Using `dplyr` with spreadsheet-like data
+5. Joining functions together with `|>`
+
+:::
+
+::: {.fragment}
+
+- Next we'll:
+    + Use everything to make more detailed figures
+    + Perform a few analyses
+    + Utilise some features of `tidyr`
+
+:::
+
+## Section Setup
+
+:::: {.columns}
+
+::: {.column}
+
+1. Clear your `R` Environment
+2. Start a new `R` script: `AdvancedPlotting.R`
+3. Load the `tidyverse`
+4. Define a default `ggplot2` theme
+5. Import Transport
+
+:::
+
+::: {.column}
+
+```{r}
+library(tidyverse)
+theme_set(theme_bw())
+cols <- c(
+    "gender", "name", "weight", "height", "method"
+)
+transport <- "data/transport.csv" |>
+    read_csv(
+        comment = "#",
+        col_names = cols, 
+        col_types = "-ccnnc"
+    ) |>
+    mutate(
+        gender = case_when(
+            gender == "F" ~ "female",
+            gender == "M" ~ "male",
+            TRUE ~ str_to_lower(gender)
+        ),
+        gender = as.factor(gender),
+        method = factor(
+            method, 
+            levels = c("car", "bike")
+        ),
+        BMI = weight / (0.01 * height) ^ 2
+    )
+```
+
+:::
+
+::::
+
+## Section Outline
+
+- Using the pipe to create plots
+- Customising plots in detail
+- Reshaping data using `tidyr`
+
+# Visualising Data {background-color="#3c3c44" background-image=https://ggplot2.tidyverse.org/logo.png background-size="35%" background-opacity="0.4" background-position="70% 50%"}
+
+## Visualising Our Data
+
+- What might we like to show?
+    + Relationship between weight & height?
+    + Association with transportation method
+    + Distributions of BMI?
+
+## A Simple X-Y Plot
+
+- When plotting, we can simply pipe the data into `ggplot`
+
+```{r transport-points}
+#| output-location: column-fragment
+#| fig-width: 5.5
+#| fig-height: 5
+transport |>
+    ggplot(aes(height, weight)) +
+    geom_point()
+```
+
+## Adding Lines of Best Fit
+
+- Sometimes a regression line can be informative
+    + `geom_smooth()` guesses the best line
+    + `method = 'loess'` isn't that great here
+
+
+```{r transport-loess}
+#| output-location: column-fragment
+#| fig-width: 5.5
+#| fig-height: 5
+transport |>
+    ggplot(aes(height, weight)) +
+    geom_point() +
+    geom_smooth()
+```
+
+## Adding Regresion Lines
+
+- We can choose a linear regression line: `method = "lm"`
+    + We fit linear regression in `R` using the function `lm()`
+    + Hide the standard error of the regression line: `se = FALSE`
+
+
+```{r transport-lm}
+#| output-location: column-fragment
+#| fig-width: 5.5
+#| fig-height: 5
+transport |>
+    ggplot(aes(height, weight)) +
+    geom_point() +
+    geom_smooth(method = "lm", se =  FALSE)
+```
+
+## Customising Parameters
+
+- We can change the colour of the line: `colour = "black"`
+    + Anything set inside `aes()` should be a column  in your data
+    + Anything set outside of `aes()` is be a fixed-value $\implies$ over-rides `aes()`
+    + Can also set `linetype`, `linewidth`, `alpha` etc
+    + Is `geom_*` specific
+
+## Customising Parameters
+
+```{r transport-lm-black}
+#| output-location: column-fragment
+#| fig-width: 5.5
+#| fig-height: 5
+transport |>
+    ggplot(aes(height, weight)) +
+    geom_point() +
+    geom_smooth(
+        method = "lm", se =  FALSE,
+        colour = "black"
+    )
+```
+
+
+## Changing Shapes
+
+- Similarly for the points: `colour = "grey30"`
+    + The range of shapes is visible using `?pch`
+    + For shapes 21-25 colour is outline, fill is the internal colour
+    + Additional parameters include `size`, `alpha`
+
+
+```{r transport-grey-points}
+#| output-location: column-fragment
+#| fig-width: 5.5
+#| fig-height: 5
+transport |>
+    ggplot(aes(height, weight)) +
+    geom_point(colour = "grey30", shape = 1) +
+    geom_smooth(
+        method = "lm", se =  FALSE,
+        colour = "black"
+    )
+```
+
+
+
+## Parameters Inside or Outside `aes()`
+
+- Parameters set outside `aes()` will over-ride anything inside `aes()`
+    + We have globally set colour to depend on `gender`
+    + This is overridden by both `geom_point()` and `geom_smooth()`
+
+```{r transport-override-aes}
+#| output-location: column-fragment
+#| fig-width: 5.5
+#| fig-height: 5
+transport |>
+    ggplot(
+        aes(height, weight, colour = gender)
+    ) +
+    geom_point(
+        colour = "grey30", shape = "#", size = 4
+    ) +
+    geom_smooth(
+        method = "lm", se =  FALSE,
+        colour = "black"
+    )
+```
+
+## Parameters Inside or Outside `aes()`
+
+- Now remove the colour from `geom_point()`
+    + Inherits from the `aes()` within `ggplot()`
+
+```{r transport-colour-gender}
+#| output-location: column-fragment
+#| fig-width: 5.5
+#| fig-height: 5
+transport |>
+    ggplot(
+        aes(height, weight, colour = gender)
+    ) +
+    geom_point(shape = "#", size = 4) +
+    geom_smooth(
+        method = "lm", se =  FALSE,
+        colour = "black"
+    )
+```
+
+## Custom Scales
+
+- Providing specific colours can take a vector
+    + Can be named for greater control
+
+```{r transport-colour-gender-scale}
+#| output-location: column-fragment
+#| fig-width: 5.5
+#| fig-height: 5
+transport |>
+    ggplot(
+        aes(height, weight, colour = gender)
+    ) +
+    geom_point(shape = "#", size = 4) +
+    geom_smooth(
+        method = "lm", se =  FALSE,
+        colour = "black"
+    ) +
+    scale_colour_manual(
+        values = c(
+            female = "navyblue", male = "red3"
+        )
+    )
+```
+
+## Custom Scales
+
+- Likewise for shapes
+    + Values are applied in the same order as the legend
+
+```{r transport-shape-gender-scale}
+#| output-location: column-fragment
+#| fig-width: 5.5
+#| fig-height: 5
+transport |>
+    ggplot(
+        aes(height, weight, colour = gender)
+    ) +
+    geom_point(
+        aes(shape = gender), size = 4
+    ) +
+    geom_smooth(
+        method = "lm", se =  FALSE,
+        colour = "black"
+    ) +
+    scale_colour_manual(
+        values = c(
+            female = "navyblue", male = "red3"
+        )
+    ) +
+    scale_shape_manual(
+        values = c("F", "M")
+    )
+```
+
+## Adding Statistics
+
+::: {style="font-size:90%"}
+
+- Sometimes we might wish to add summary statistics to plots
+- We can create on the fly *inside a geom_*
+
+```{r transport-with-cor}
+#| output-location: column-fragment
+#| fig-width: 5.5
+#| fig-height: 5
+transport |>
+    ggplot(aes(height, weight)) +
+    geom_point(
+        aes(colour = gender, shape = gender),
+        size = 3
+    ) +
+    geom_smooth(
+        method = "lm", se =  FALSE,
+        colour = "black"
+    ) +
+    geom_label(
+        aes(label = label),
+        data = . %>% ## Only the magrittr works here
+            summarise(
+                cor = cor(weight, height),
+                height = mean(height),
+                ## Specify a position manually
+                # height = 165, 
+                weight = min(weight),
+            )  %>% 
+            mutate(
+                label = paste("rho ==", round(cor, 2))
+            ),
+        parse = TRUE
+    ) +
+    scale_colour_manual(
+        values = c(
+            female = "navyblue", male = "red3"
+        )
+    ) +
+    scale_shape_manual(
+        values = c("F", "M")
+    )
+```
+
+:::
+
+## Using Additional Packages
+
+- There are multiple options for adding other labels
+
+. . .
+
+- Add this to the top of your script <br>$\implies$ Make sure the package is loaded
+
+```{r ggpmisc}
+library(ggpmisc)
+```
+
+## Using Additional Packages
+
+- `stat_poly_eq()` can add $R^2$, adjusted $R^2$ or regression equations
+
+```{r transport-with-eq}
+#| output-location: column-fragment
+#| fig-width: 5.5
+#| fig-height: 5
+transport |>
+    ggplot(aes(height, weight)) +
+    geom_point(
+        aes(colour = gender, shape = gender), 
+        size = 3
+    ) +
+    geom_smooth(
+        method = "lm", se =  FALSE,
+        colour = "black"
+    ) +
+    stat_poly_eq(use_label("eq")) +
+    scale_colour_manual(
+        values = c(
+            female = "navyblue", male = "red3"
+        )
+    ) +
+    scale_shape_manual(
+        values = c("F", "M")
+    )
+```
+
+
+## Multiple Regression Equations
+
+- Combining with facets can provide multiple equations
+
+```{r transport-with-facet-eq}
+#| output-location: column-fragment
+#| fig-width: 6.5
+#| fig-height: 4.5
+transport |>
+    ggplot(aes(height, weight)) +
+    geom_point(
+        aes(colour = gender, shape = gender), 
+        size = 3
+    ) +
+    geom_smooth(
+        method = "lm", se =  FALSE,
+        colour = "black"
+    ) +
+    stat_poly_eq(use_label("eq")) +
+    facet_wrap(~method) +
+    scale_colour_manual(
+        values = c(
+            female = "navyblue", male = "red3"
+        )
+    ) +
+    scale_shape_manual(
+        values = c("F", "M")
+    )
+```
+
+# Modifying Data<br>Prior To Plotting {background-color="#3c3c44" background-image=https://carpentries-incubator.github.io/open-science-with-r/img/05-tidyr.png background-size="35%" background-opacity="0.4" background-position="70% 50%"}
+
+## Summary Plots
+
+- So far we've just plotted the complete dataset
+    + We did use `%>%` inside a `geom_*` to find a correlation...
+
+. . .
+
+- We can also use our `tidyverse` tools to create summaries to plot
+    + E.g. Barplots of the mean with error bars
+
+## Summary Plots
+
+- To create a barplot of the mean BMI across all groups
+    + Need the mean BMI for each group
+    + Also the standard deviation
+
+. . .
+
+    
+```{r}
+transport |>
+    summarise(
+        mn_bmi = mean(BMI),
+        sd_bmi = sd(BMI),
+        .by = c(method, gender)
+    )
+```
+
+## Creating a Barplot
+
+- Now we can create a barplot using `geom_col()`
+
+```{r barplot-transport}
+#| output-location: column-fragment
+#| fig-width: 5.5
+#| fig-height: 5
+transport |>
+    summarise(
+        mn_bmi = mean(BMI), sd_bmi = sd(BMI),
+        .by = c(method, gender)
+    ) |>
+    ggplot(aes(method, mn_bmi, fill = gender)) +
+    geom_col() +
+    facet_wrap(~gender) +
+    labs(y = "Mean BMI") +
+    scale_fill_brewer(palette = "Set2") 
+```
+
+## Adding Error Bars
+
+- We add error bars using `geom_errorbar()`
+
+```{r transport-errorbars}
+#| output-location: column-fragment
+#| fig-width: 5.5
+#| fig-height: 5
+transport |>
+    summarise(
+        mn_bmi = mean(BMI), sd_bmi = sd(BMI),
+        .by = c(method, gender)
+    ) |>
+    ggplot(aes(method, mn_bmi, fill = gender)) +
+    geom_col() +
+    geom_errorbar(
+        aes(
+            ymin = mn_bmi - sd_bmi,
+            ymax = mn_bmi + sd_bmi
+        ),
+        width = 0.2
+    ) +
+    facet_wrap(~gender) +
+    labs(y = "Mean BMI") +
+    scale_fill_brewer(palette = "Set2") 
+```
+
+## Adding Error Bars
+
+- If we choose not to facet it's much trickier
+    + Let's hide the error bars to see why
+
+```{r transport-barplot-nofacet}
+#| output-location: column-fragment
+#| fig-width: 5.5
+#| fig-height: 5
+transport |>
+    summarise(
+        mn_bmi = mean(BMI), sd_bmi = sd(BMI),
+        .by = c(method, gender)
+    ) |>
+    ggplot(aes(method, mn_bmi, fill = gender)) +
+    geom_col(position = "dodge") +
+    labs(y = "Mean BMI") +
+    scale_fill_brewer(palette = "Set2") 
+```
+
+
+## Adding Error Bars
+
+- Adding `position = "dodge"` separates the bars horizontally
+- What is the x co-ordinate for each bar now?
+- What is the width of each bar?
+
+## Plotting with Factors
+
+- Let's try *coerce* factors to integers
+
+```{r, results='markup'}
+#| output-location: fragment
+transport |>
+    summarise(
+        mn_bmi = mean(BMI), sd_bmi = sd(BMI),
+        .by = c(method, gender)
+    ) |>
+    mutate(
+        method_int = as.integer(method),
+        gender_int = as.integer(gender)
+    )
+```
+
+::: {.notes}
+This can seem weird that we've turned a character string into numbers...
+:::
+
+## Plotting with Factors
+
+- Each factor level is assigned an integer starting at 1
+    + These were how ggplot originally placed the x co-ordinates
+
+. . .
+
+- Can we figure out our x-co-ordinates yet?
+
+. . .
+
+- I guesstimated that each bar had a width of 0.45
+    + The centre of each bar is `method_int` $\pm$ 0.225
+
+. . .
+
+- I also wish it was easier
+    + Maybe I just haven't found the right package/function yet
+    
+## Plotting with Factors
+
+
+
+```{r, results='markup'}
+#| output-location: fragment
+transport |>
+    summarise(
+        mn_bmi = mean(BMI), sd_bmi = sd(BMI),
+        .by = c(method, gender)
+    ) |>
+    mutate(
+        method_int = as.integer(method),
+        gender_int = as.integer(gender),
+        x = case_when(
+            gender == "female" ~ method_int - 0.225,
+            gender == "male" ~ method_int + 0.225,
+        )
+    )
+```
+
+
+## Plotting with Factors
+
+::: {style="font-size:95%"}
+
+```{r transport-errobars-manual, results='markup'}
+#| output-location: column-fragment
+#| fig-width: 5.5
+#| fig-height: 5
+transport |>
+    summarise(
+        mn_bmi = mean(BMI), sd_bmi = sd(BMI),
+        .by = c(method, gender)
+    ) |>
+    mutate(
+        method_int = as.integer(method),
+        x = case_when(
+            gender == "female" ~ method_int - 0.225,
+            gender == "male" ~ method_int + 0.225,
+        )
+    ) |>
+    ggplot(aes(method, mn_bmi, fill = gender)) +
+    geom_col(position = "dodge") +
+    geom_errorbar(
+        aes(
+            x = x,
+            ymin = mn_bmi - sd_bmi,
+            ymax = mn_bmi + sd_bmi
+        ),
+        width = 0.1
+    ) +
+    labs(y = "Mean BMI") +
+    scale_fill_brewer(palette = "Set2") 
+```
+
+:::
+
+## Modifying Axes
+
+- That space at the bottom of the y-axis bother me
+    + By default axes expand the data by ~5% of the range
+- We can control the expansion
+    + Using multiplicative scaling (continuous data)
+    + Using Additive Scaling (discrete data)
+- The relevant function is called `expansion()`
+    + Is passed to the `expand` argument inside `scale_x/y_*()`
+
+## Modifying Axes
+
+::: {style="font-size:90%"}
+
+- We also label them using the `name` argument
+
+```{r transport-errobars-expansion, results='markup'}
+#| output-location: column-fragment
+#| fig-width: 5.5
+#| fig-height: 5
+transport |>
+    summarise(
+        mn_bmi = mean(BMI), sd_bmi = sd(BMI),
+        .by = c(method, gender)
+    ) |>
+    mutate(
+        method_int = as.integer(method),
+        x = case_when(
+            gender == "female" ~ method_int - 0.225,
+            gender == "male" ~ method_int + 0.225,
+        )
+    ) |>
+    ggplot(aes(method, mn_bmi, fill = gender)) +
+    geom_col(position = "dodge") +
+    geom_errorbar(
+        aes(
+            x = x,
+            ymin = mn_bmi - sd_bmi,
+            ymax = mn_bmi + sd_bmi
+        ), width = 0.1
+    ) +
+    scale_fill_brewer(
+        palette = "Set2", name = "Gender"
+    ) +
+    scale_y_continuous(
+        expand = expansion(c(0, 0.05)), 
+        name = "Mean BMI"
+    )
+```
+
+:::
+
+## More Complex Summaries
+
+- So far we only visualised the mean BMI values across the dataset
+- Let's try and repeat for both weight and height on the same figure
+    + May not be brilliant in reality
+    
+. . .
+
+```{r}
+#| results: markup
+transport |>
+    summarise(
+        across(
+            ends_with("ght"),
+            .fns = c(mn = mean, sd = sd)
+        ),
+        .by = c(method, gender)
+    ) 
+```
+
+. . .
+
+<br>*Can we get the means into one column and sd into another?*
+
+
+## Reshaping Data
+
+- `pivot_longer()` enables shifting from wide to long form
+- Choose the columns to run down the page
+    + Original column names go into one column
+    + All values go into another
+    
+. . .
+
+```{r}
+#| results: markup
+#| output-location: column
+transport |>
+    summarise(
+        across(
+            ends_with("ght"),
+            .fns = c(mn = mean, sd = sd)
+        ),
+        .by = c(method, gender)
+    ) |>
+    pivot_longer(cols = contains("_")) 
+```
+
+## Reshaping Data
+
+- We can now `separate()` the values in `name`
+    + `into = c("stat", "type")` defines the new column names
+
+```{r}
+#| results: markup
+#| output-location: column
+transport |>
+    summarise(
+        across(
+            ends_with("ght"),
+            .fns = c(mn = mean, sd = sd)
+        ),
+        .by = c(method, gender)
+    ) |>
+    pivot_longer(cols = contains("_")) |>
+    separate(
+        name, into = c("stat", "type"), 
+        sep = "_"
+    )
+```
+
+## Reshaping Data
+
+- The opposite of `pivot_longer()` is `pivot_wider()`
+
+```{r}
+#| results: markup
+#| output-location: column
+transport |>
+    summarise(
+        across(
+            ends_with("ght"),
+            .fns = c(mn = mean, sd = sd)
+        ),
+        .by = c(method, gender)
+    ) |>
+    pivot_longer(cols = contains("_")) |>
+    separate(
+        name, into = c("stat", "type"), 
+        sep = "_"
+    ) |>
+    pivot_wider(
+        names_from = "type",
+        values_from = "value"
+    )
+```
+
+. . .
+
+<br>*Now we have something we can use for barplots with errorbars*
+
+## Reshaping Data
+
+- For the sake of brevity going forward, save that as `summ_df`
+
+```{r}
+summ_df <- transport |>
+    summarise(
+        across(
+            ends_with("ght"),
+            .fns = c(mn = mean, sd = sd)
+        ),
+        .by = c(method, gender)
+    ) |>
+    pivot_longer(cols = contains("_")) |>
+    separate(
+        name, into = c("stat", "type"), 
+        sep = "_"
+    ) |>
+    pivot_wider(
+        names_from = "type",
+        values_from = "value"
+    )
+```
+
+
+## Plotting Multiple Summaries
+
+::: {style="font-size:95%"}
+
+- Hide the y-axis name using `name = c()`
+
+```{r}
+#| output-location: column-fragment
+#| fig-width: 5.5
+#| fig-height: 5
+summ_df |>
+    mutate(
+        gender_int = as.numeric(gender),
+        x_bar = case_when(
+            method == "car" ~ gender_int - 0.225,
+            method == "bike" ~ gender_int + 0.225
+        )
+    ) |>
+    ggplot(aes(gender, mn, fill = method)) +
+    geom_col(position = "dodge") +
+    geom_errorbar(
+        aes(
+            x = x_bar,
+            ymin = mn - sd, ymax = mn + sd
+        ),
+        width = 0.2
+    )  +
+    facet_wrap(~stat, scales = "free_y") +
+    scale_fill_brewer(
+        palette = "Set2", name = "Method"
+    ) +
+    scale_y_continuous(
+        expand = expansion(c(0, 0.05)), 
+        name = c()
+    ) 
+```
+
+:::
+
+## Plotting Multiple Summaries
+
+::: {style="font-size:90%"}
+
+- Add the units to the facet names
+
+```{r}
+#| output-location: column-fragment
+#| fig-width: 5.5
+#| fig-height: 5
+summ_df |>
+    mutate(
+        gender_int = as.numeric(gender),
+        x_bar = case_when(
+            method == "car" ~ gender_int - 0.225,
+            method == "bike" ~ gender_int + 0.225
+        ),
+        stat = stat |>
+            str_replace("height", "Height (cm)") |>
+            str_replace("weight", "Weight (kg)")
+    ) |>
+    ggplot(aes(gender, mn, fill = method)) +
+    geom_col(position = "dodge") +
+    geom_errorbar(
+        aes(
+            x = x_bar,
+            ymin = mn - sd, ymax = mn + sd
+        ),
+        width = 0.2
+    )  +
+    facet_wrap(~stat, scales = "free_y") +
+    scale_fill_brewer(
+        palette = "Set2", name = "Method"
+    ) +
+    scale_y_continuous(
+        expand = expansion(c(0, 0.05)), name = c()
+    ) 
+```
+
+:::
+
+# Themes {background-color="#3c3c44" background-image=https://ggplot2.tidyverse.org/logo.png background-size="35%" background-opacity="0.4" background-position="70% 50%"}
+
+## Using Themes
+
+::: {style="font-size:90%"}
+
+:::: {.columns}
+
+::: {.column}
+
+- The overall plot appearance can be set using `theme()`
+- A bit overwhelming, but very customisable
+- Let's save our existing plot a `p`
+    + Can be drawn again at anytime by entering `p`
+    + Can still be modified on *on-the-fly*
+
+:::
+
+::: {.column}
+
+::: {.fragment}
+
+
+
+```{r}
+p <- summ_df |>
+    mutate(
+        gender_int = as.numeric(gender),
+        x_bar = case_when(
+            method == "car" ~ gender_int - 0.225,
+            method == "bike" ~ gender_int + 0.225
+        ),
+        stat = stat |>
+            str_replace("height", "Height (cm)") |>
+            str_replace("weight", "Weight (kg)")
+    ) |>
+    ggplot(aes(gender, mn, fill = method)) +
+    geom_col(position = "dodge") +
+    geom_errorbar(
+        aes(
+            x = x_bar,
+            ymin = mn - sd, ymax = mn + sd
+        ),
+        width = 0.2
+    )  +
+    facet_wrap(~stat, scales = "free_y") +
+    xlab("Gender") +
+    scale_fill_brewer(
+        palette = "Set2", name = "Method"
+    ) +
+    scale_y_continuous(
+        expand = expansion(c(0, 0.05)), name = c()
+    ) 
+```
+
+:::
+
+:::
+
+
+::::
+
+:::
+
+## Using Themes
+
+- If we try to add a title, it's aligned left
+
+```{r weight-height-left-title}
+p + ggtitle("Weight and Height Across Participants")
+```
+
+## Using Themes
+
+- Most `theme()` elements have their own modification functions
+    + text: `element_text()`
+    + lines: `element_line()`
+    + rectangles: `element_rect()`
+
+. . .
+
+- All can be removed using `element_blank`
+
+. . .
+
+- The plot title needs `element_text()`
+
+## Using Themes
+
+::: {style="font-size:90%"}
+
+- `hjust` controls the horizontal adjustment
+    + `hjust = 0.5` is centre-aligned
+
+```{r weight-height-centre-title}
+#| output-location: column-fragment
+#| fig-width: 5.5
+#| fig-height: 5
+p + 
+    ggtitle("Weight and Height Across Participants") +
+    theme(plot.title = element_text(hjust = 0.5))
+```
+
+:::
+
+## Using Themes
+
+::: {style="font-size:90%"}
+
+- We can resize all primary text
+
+```{r weight-height-large-text}
+#| output-location: column-fragment
+#| fig-width: 5.5
+#| fig-height: 5
+p + 
+    ggtitle("Weight and Height Across Participants") +
+    theme(
+        text = element_text(size = 14),
+        plot.title = element_text(hjust = 0.5)
+    )
+```
+
+:::
+
+## Using Themes
+
+::: {style="font-size:90%"}
+
+- Control legend position
+    + Doesn't need an `element_*()` function
+
+```{r weight-height-legend-bottom}
+#| output-location: column-fragment
+#| fig-width: 5.5
+#| fig-height: 5
+p + 
+    ggtitle("Weight and Height Across Participants") +
+    theme(
+        text = element_text(size = 14),
+        plot.title = element_text(hjust = 0.5),
+        legend.position = "bottom"
+    )
+```
+
+:::
+
+## Using Themes
+
+::: {style="font-size:90%"}
+
+- Hide the background grid & rotates x-axis text
+
+```{r weight-height-no-grid}
+#| output-location: column-fragment
+#| fig-width: 5.5
+#| fig-height: 5
+p + 
+    ggtitle("Weight and Height Across Participants") +
+    theme(
+        text = element_text(size = 14),
+        plot.title = element_text(hjust = 0.5),
+        legend.position = "bottom",
+        panel.grid = element_blank(),
+        axis.text.x = element_text(
+            angle = 90, vjust = 0.5, hjust = 1
+        )
+    )
+```
+
+:::
+
+## Exporting Plots
+
+- Making plots in `R` is nice <br>$\implies$ *How do we get them into our paper??!!!*
+
+. . .
+
+- `ggsave()` will save the last plot
+    + The file extension will determine the format
+    + Can be `png`, `jpg`, `pdf`, `svg`, `tiff` etc
+    + `width` & `height` default to inches but can be changed
+    
+. . .
+
+- Getting font sizes right can be infuriating
+    + Always add the save after you create the plot
+    + Open immediately and check the font sizes
+
+
+## Closing Comments
+
+- Can now (hopefully) make the figures for our next paper
+- `ggplot2` is very powerful $\implies$ takes a long time to master
+- Getting data structured correctly is an important part
+
+. . .
+
+- Note that once we loaded data $\implies$ never modified
+
+. . .
+
+- We saved four objects
+    + `cols`, `transport`, `summ_df`, `p`
+    + The last two were only to fit the code on slides
+
+. . .    
+    
+- This keeps a clean workspace
+    + No need for `transport`, `transport1`, `transport1_mod` etc
+    + Very beneficial for reproducibility
