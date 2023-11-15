@@ -358,7 +358,7 @@ transport |>
         height = quantile(height, 0.9),
         weight = min(weight),
       )  %>% 
-      mutate(label = paste("r =", round(cor, 2)))
+      mutate(label = paste("rho =", round(cor, 2)))
   ) +
   scale_colour_manual(
     values = c(female = "navyblue", male = "red3")

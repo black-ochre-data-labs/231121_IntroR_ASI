@@ -784,7 +784,7 @@ Dr Stevie Pederson
 <span id="cb11-15"><a href="#cb11-15" aria-hidden="true" tabindex="-1"></a>        <span class="at">height =</span> <span class="fu">quantile</span>(height, <span class="fl">0.9</span>),</span>
 <span id="cb11-16"><a href="#cb11-16" aria-hidden="true" tabindex="-1"></a>        <span class="at">weight =</span> <span class="fu">min</span>(weight),</span>
 <span id="cb11-17"><a href="#cb11-17" aria-hidden="true" tabindex="-1"></a>      )  <span class="sc">%&gt;%</span> </span>
-<span id="cb11-18"><a href="#cb11-18" aria-hidden="true" tabindex="-1"></a>      <span class="fu">mutate</span>(<span class="at">label =</span> <span class="fu">paste</span>(<span class="st">"r ="</span>, <span class="fu">round</span>(cor, <span class="dv">2</span>)))</span>
+<span id="cb11-18"><a href="#cb11-18" aria-hidden="true" tabindex="-1"></a>      <span class="fu">mutate</span>(<span class="at">label =</span> <span class="fu">paste</span>(<span class="st">"rho ="</span>, <span class="fu">round</span>(cor, <span class="dv">2</span>)))</span>
 <span id="cb11-19"><a href="#cb11-19" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
 <span id="cb11-20"><a href="#cb11-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_colour_manual</span>(</span>
 <span id="cb11-21"><a href="#cb11-21" aria-hidden="true" tabindex="-1"></a>    <span class="at">values =</span> <span class="fu">c</span>(<span class="at">female =</span> <span class="st">"navyblue"</span>, <span class="at">male =</span> <span class="st">"red3"</span>)</span>
