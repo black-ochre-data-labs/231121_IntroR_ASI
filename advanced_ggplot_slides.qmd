@@ -494,147 +494,24 @@ transport |>
 #| fig-height: 5
 transport |>
   summarise(
-    mn_bmi = mean(BMI), sd_bmi = sd(BMI),
+    across(BMI, .fns = c(mn = mean, sd = sd)),
     .by = c(method, gender)
   ) |>
-  ggplot(aes(method, mn_bmi, fill = gender)) +
+  ggplot(aes(method, BMI_mn, fill = gender)) +
   geom_col() +
   geom_errorbar(
     aes(
-      ymin = mn_bmi - sd_bmi,
-      ymax = mn_bmi + sd_bmi
+      ymin = BMI_mn - BMI_sd,
+      ymax = BMI_mn + BMI_sd
     ),
     width = 0.2
   ) +
   facet_wrap(~gender) +
-  labs(y = "Mean BMI") +
-  scale_fill_brewer(palette = "Set2") 
-```
-
-## Adding Error Bars
-
-- If we choose not to facet it's much trickier
-+ Let's hide the error bars to see why
-
-```{r transport-barplot-nofacet}
-#| output-location: column-fragment
-#| fig-width: 5.5
-#| fig-height: 5
-transport |>
-  summarise(
-    mn_bmi = mean(BMI), sd_bmi = sd(BMI),
-    .by = c(method, gender)
-  ) |>
-  ggplot(aes(method, mn_bmi, fill = gender)) +
-  geom_col(position = "dodge") +
-  labs(y = "Mean BMI") +
+  labs(y = "Mean BMI", fill = "Gender") +
   scale_fill_brewer(palette = "Set2") 
 ```
 
 
-## Adding Error Bars
-
-- Adding `position = "dodge"` separates the bars horizontally
-- What is the x co-ordinate for each bar now?
-- What is the width of each bar?
-
-## Plotting with Factors
-
-- Let's try *coerce* factors to integers
-
-```{r, results='markup'}
-#| output-location: fragment
-transport |>
-  summarise(
-    mn_bmi = mean(BMI), sd_bmi = sd(BMI),
-    .by = c(method, gender)
-  ) |>
-  mutate(
-    method_int = as.integer(method),
-    gender_int = as.integer(gender)
-  )
-```
-
-::: {.notes}
-This can seem weird that we've turned a character string into numbers...
-:::
-
-## Plotting with Factors
-
-- Each factor level is assigned an integer starting at 1
-+ These were how ggplot originally placed the x co-ordinates
-
-. . .
-
-- Can we figure out our x-co-ordinates yet?
-
-. . .
-
-- I guesstimated that each bar had a width of 0.45
-+ The centre of each bar is `method_int` $\pm$ 0.225
-
-. . .
-
-- I also wish it was easier
-+ Maybe I just haven't found the right package/function yet
-
-## Plotting with Factors
-
-
-
-```{r, results='markup'}
-#| output-location: fragment
-transport |>
-  summarise(
-    mn_bmi = mean(BMI), sd_bmi = sd(BMI),
-    .by = c(method, gender)
-  ) |>
-  mutate(
-    method_int = as.integer(method),
-    gender_int = as.integer(gender),
-    x = case_when(
-      gender == "female" ~ method_int - 0.225,
-      gender == "male" ~ method_int + 0.225,
-    )
-  )
-```
-
-
-## Plotting with Factors
-
-::: {style="font-size:95%"}
-
-```{r transport-errobars-manual, results='markup'}
-#| output-location: column-fragment
-#| fig-width: 5.5
-#| fig-height: 5
-transport |>
-  summarise(
-    mn_bmi = mean(BMI), sd_bmi = sd(BMI),
-    .by = c(method, gender)
-  ) |>
-  mutate(
-    method_int = as.integer(method),
-    x = case_when(
-      gender == "female" ~ method_int - 0.225,
-      gender == "male" ~ method_int + 0.225,
-    )
-  ) |>
-  ggplot(aes(method, mn_bmi, fill = gender)) +
-  geom_col(position = "dodge") +
-  geom_errorbar(
-    aes(
-      x = x,
-      ymin = mn_bmi - sd_bmi,
-      ymax = mn_bmi + sd_bmi
-    ),
-    width = 0.1
-  ) +
-  labs(y = "Mean BMI") +
-  scale_fill_brewer(palette = "Set2") 
-```
-
-:::
 
 ## Modifying Axes
 
@@ -658,25 +535,19 @@ transport |>
 #| fig-height: 5
 transport |>
   summarise(
-    mn_bmi = mean(BMI), sd_bmi = sd(BMI),
+    across(BMI, .fns = c(mn = mean, sd = sd)),
     .by = c(method, gender)
   ) |>
-  mutate(
-    method_int = as.integer(method),
-    x = case_when(
-      gender == "female" ~ method_int - 0.225,
-      gender == "male" ~ method_int + 0.225,
-    )
-  ) |>
-  ggplot(aes(method, mn_bmi, fill = gender)) +
+  ggplot(aes(method, BMI_mn, fill = gender)) +
   geom_col(position = "dodge") +
   geom_errorbar(
     aes(
-      x = x,
-      ymin = mn_bmi - sd_bmi,
-      ymax = mn_bmi + sd_bmi
-    ), width = 0.1
+      ymin = BMI_mn - BMI_sd,
+      ymax = BMI_mn + BMI_sd
+    ),
+    width = 0.2
   ) +
+  facet_wrap(~gender) +
   scale_fill_brewer(
     palette = "Set2", name = "Gender"
   ) +
@@ -688,211 +559,171 @@ transport |>
 
 :::
 
-## More Complex Summaries
+## DIY Time
 
-- So far we only visualised the mean BMI values across the dataset
-- Let's try and repeat for both weight and height on the same figure
-+ May not be brilliant in reality
+- Load the RT_PCR data from yesterday
 
-. . .
-
-```{r}
-#| results: markup
-transport |>
-  summarise(
-    across(
-      ends_with("ght"),
-      .fns = c(mn = mean, sd = sd)
-    ),
-    .by = c(method, gender)
-  ) 
+```{r load-pcr}
+library(readxl)
+pcr <- read_excel("data/RealTimeData.xlsx") |>
+  setNames(c("Sample", "SLAM", "GAPDH"))
 ```
 
-. . .
+- This contains the Ct values for SLAM + GAPDH (HK)
+    + Timepoints are 24, 72 and 120h
+    + Treatments are Control + Infected
+    
+### The Challenge
 
-<br>*Can we get the means into one column and sd into another?*
+- Put Control + Infected on the x-axis
+- Make a boxplot showing Ct values for SLAM
+- Facet by timepoint keeping the order correct
+- *Bonus* Taking dCt as SLAM - GAPDH, repeat for dCt
 
-
-## Reshaping Data
-
-- `pivot_longer()` enables shifting from wide to long form
-- Choose the columns to run down the page
-+ Original column names go into one column
-+ All values go into another
-
-. . .
-
-```{r}
-#| results: markup
-#| output-location: column
-transport |>
-  summarise(
-    across(
-      ends_with("ght"),
-      .fns = c(mn = mean, sd = sd)
-    ),
-    .by = c(method, gender)
-  ) |>
-  pivot_longer(cols = contains("_")) 
-```
-
-## Reshaping Data
-
-- We can now `separate()` the values in `name`
-+ `into = c("stat", "type")` defines the new column names
-
-```{r}
-#| results: markup
-#| output-location: column
-transport |>
-  summarise(
-    across(
-      ends_with("ght"),
-      .fns = c(mn = mean, sd = sd)
-    ),
-    .by = c(method, gender)
-  ) |>
-  pivot_longer(cols = contains("_")) |>
-  separate(
-    name, into = c("stat", "type"), 
-    sep = "_"
-  )
-```
-
-## Reshaping Data
-
-- The opposite of `pivot_longer()` is `pivot_wider()`
-
-```{r}
-#| results: markup
-#| output-location: column
-transport |>
-  summarise(
-    across(
-      ends_with("ght"),
-      .fns = c(mn = mean, sd = sd)
-    ),
-    .by = c(method, gender)
-  ) |>
-  pivot_longer(cols = contains("_")) |>
-  separate(
-    name, into = c("stat", "type"), 
-    sep = "_"
-  ) |>
-  pivot_wider(
-    names_from = "type",
-    values_from = "value"
-  )
-```
-
-. . .
-
-<br>*Now we have something we can use for barplots with errorbars*
-
-## Reshaping Data
-
-- For the sake of brevity going forward, save that as `summ_df`
-
-```{r}
-summ_df <- transport |>
-  summarise(
-    across(
-      ends_with("ght"),
-      .fns = c(mn = mean, sd = sd)
-    ),
-    .by = c(method, gender)
-  ) |>
-  pivot_longer(cols = contains("_")) |>
-  separate(
-    name, into = c("stat", "type"), 
-    sep = "_"
-  ) |>
-  pivot_wider(
-    names_from = "type",
-    values_from = "value"
-  )
-```
-
-
-## Plotting Multiple Summaries
-
-::: {style="font-size:95%"}
-
-- Hide the y-axis name using `name = c()`
-
-```{r}
-#| output-location: column-fragment
-#| fig-width: 5.5
-#| fig-height: 5
-summ_df |>
+```{r, eval = FALSE, echo=FALSE}
+pcr |>
   mutate(
-    gender_int = as.numeric(gender),
-    x_bar = case_when(
-      method == "car" ~ gender_int - 0.225,
-      method == "bike" ~ gender_int + 0.225
-    )
+    treat = ifelse(str_detect(Sample, "C"), "Control", "Infected"),
+    timepoint = str_extract(Sample, "[0-9]+") |>
+      paste("hr") |>
+      fct_inorder()
   ) |>
-  ggplot(aes(gender, mn, fill = method)) +
-  geom_col(position = "dodge") +
-  geom_errorbar(
-    aes(
-      x = x_bar,
-      ymin = mn - sd, ymax = mn + sd
-    ),
-    width = 0.2
-  )  +
-  facet_wrap(~stat, scales = "free_y") +
-  scale_fill_brewer(
-    palette = "Set2", name = "Method"
-  ) +
-  scale_y_continuous(
-    expand = expansion(c(0, 0.05)), 
-    name = c()
+  ggplot(aes(treat, SLAM, fill = treat)) +
+  geom_boxplot() +
+  facet_wrap(~timepoint)
+```
+
+```{r}
+pcr |>
+  mutate(
+    treat = ifelse(str_detect(Sample, "C"), "Control", "Infected"),
+    timepoint = str_extract(Sample, "[0-9]+") |>
+      paste("hr") |>
+      fct_inorder(),
+    dCt = SLAM - GAPDH
+  ) |>
+  ggplot(aes(treat, dCt, fill = treat)) +
+  geom_boxplot() +
+  facet_wrap(~timepoint)
+```
+
+
+
+# Using Tidyr {background-color="#3c3c44" background-size="35%" background-opacity="0.4" background-position="70% 50%"}
+
+## Splitting Columns
+
+- The first colunm pf `pcr` has a few issues
+    + Should fix using `mutate` first
+
+. . . 
+
+- One possible way is as below
+
+```{r}
+pcr |>
+  mutate(
+    Sample = str_replace(Sample, "(C|F)([^ ])", "\\1 \\2") |>
+      str_replace("[Hh]$", "hr")
   ) 
 ```
 
+*Can you understand this code?*
+
+::: {.notes}
+- C or F without a space has a space inserted
+- Replace Upper/Lower case H with lower case hr
 :::
 
-## Plotting Multiple Summaries
+## Splitting Columns
 
-::: {style="font-size:90%"}
-
-- Add the units to the facet names
+- Now we've put a space between treatment and timepoint
+    + `separate()` will split columns on any character
+    + Uses `"[^[:alnum:]]+"` as the default pattern
+    + 1 or more consecutive non-alphanumeric characters
 
 ```{r}
-#| output-location: column-fragment
-#| fig-width: 5.5
-#| fig-height: 5
-summ_df |>
+pcr |>
   mutate(
-    gender_int = as.numeric(gender),
-    x_bar = case_when(
-      method == "car" ~ gender_int - 0.225,
-      method == "bike" ~ gender_int + 0.225
-    ),
-    stat = stat |>
-      str_replace("height", "Height (cm)") |>
-      str_replace("weight", "Weight (kg)")
+    Sample = str_replace(Sample, "(C|F)([^ ])", "\\1 \\2") |>
+      str_replace("[Hh]$", "hr")
   ) |>
-  ggplot(aes(gender, mn, fill = method)) +
-  geom_col(position = "dodge") +
-  geom_errorbar(
-    aes(
-      x = x_bar,
-      ymin = mn - sd, ymax = mn + sd
-    ),
-    width = 0.2
-  )  +
-  facet_wrap(~stat, scales = "free_y") +
-  scale_fill_brewer(
-    palette = "Set2", name = "Method"
-  ) +
-  scale_y_continuous(
-    expand = expansion(c(0, 0.05)), name = c()
-  ) 
+  mutate(rep = seq_len(n()), .by = Sample) |>
+  separate(Sample, into = c("treat", "timepoint"))
 ```
 
-:::
+## Splitting Columns
+
+- Now we can add a column for each replicate
+- Also modify the treatment column
+
+
+```{r}
+pcr |>
+  mutate(
+    Sample = str_replace(Sample, "(C|F)([^ ])", "\\1 \\2") |>
+      str_replace("[Hh]$", "hr")
+  ) |>
+  mutate(rep = seq_len(n()), .by = Sample) |>
+  separate(Sample, into = c("treat", "timepoint"))  |>
+  mutate(
+    treat = ifelse(treat == "C", "Control", "Infected"),
+    timepoint = fct_inorder(timepoint)
+  )
+```
+
+## Splitting Columns
+
+- We should make this our default object on loading
+
+```{r}
+pcr <- read_excel("data/RealTimeData.xlsx") |>
+  setNames(c("Sample", "SLAM", "GAPDH")) |>
+  mutate(
+    Sample = str_replace(Sample, "(C|F)([^ ])", "\\1 \\2") |>
+      str_replace("[Hh]$", "hr")
+  ) |>
+  mutate(rep = seq_len(n()), .by = Sample) |>
+  separate(Sample, into = c("treat", "timepoint"))  |>
+  mutate(
+    treat = ifelse(treat == "C", "Control", "Infected"),
+    timepoint = fct_inorder(timepoint)
+  )
+```
+
+
+## `pivot_longer()`
+
+- If we wish to put both GAPDH and SLAM values into 1 coluns
+
+```{r}
+pcr |>
+  pivot_longer(
+    cols = all_of(c("SLAM", "GAPDH")), names_to = "gene", values_to = "Ct"
+  )
+```
+
+## `pivot_longer()`
+
+```{r}
+pcr |>
+  pivot_longer(
+    cols = all_of(c("SLAM", "GAPDH")), names_to = "gene", values_to = "Ct"
+  ) |>
+  ggplot(aes(timepoint, Ct, fill = treat)) +
+  geom_boxplot() +
+  facet_wrap(~gene, scales = "free_y")
+```
+
+## `pivot_wider()`
+
+```{r}
+pcr |>
+  mutate(dCt = SLAM - GAPDH) |>
+  dplyr::select(treat, timepoint, rep, dCt) |>
+  pivot_wider(names_from = "rep", values_from = "dCt", names_prefix = "rep")
+```
+
 
 # Themes {background-color="#3c3c44" background-image=https://ggplot2.tidyverse.org/logo.png background-size="35%" background-opacity="0.4" background-position="70% 50%"}
 
