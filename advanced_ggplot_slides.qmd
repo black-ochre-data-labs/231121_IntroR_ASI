@@ -434,7 +434,7 @@ transport |>
   scale_shape_manual(values = c("F", "M"))
 ```
 
-# Modifying Data<br>Prior To Plotting {background-color="#3c3c44" background-image=https://carpentries-incubator.github.io/open-science-with-r/img/05-tidyr.png background-size="35%" background-opacity="0.4" background-position="70% 50%"}
+# Modifying Data<br>Prior To Plotting {background-color="#3c3c44"}
 
 ## Summary Plots
 
@@ -593,7 +593,7 @@ pcr |>
   facet_wrap(~timepoint)
 ```
 
-```{r}
+```{r, eval=FALSE, echo=FALSE}
 pcr |>
   mutate(
     treat = ifelse(str_detect(Sample, "C"), "Control", "Infected"),
@@ -609,7 +609,7 @@ pcr |>
 
 
 
-# Using Tidyr {background-color="#3c3c44" background-size="35%" background-opacity="0.4" background-position="70% 50%"}
+# Using Tidyr {background-color="#3c3c44" background-image=https://carpentries-incubator.github.io/open-science-with-r/img/05-tidyr.png background-size="35%" background-opacity="0.4" background-position="70% 50%"}
 
 ## Splitting Columns
 
@@ -694,7 +694,7 @@ pcr <- read_excel("data/RealTimeData.xlsx") |>
 
 ## `pivot_longer()`
 
-- If we wish to put both GAPDH and SLAM values into 1 coluns
+- If we wish to put both GAPDH and SLAM values into 1 column
 
 ```{r}
 pcr |>
@@ -704,6 +704,9 @@ pcr |>
 ```
 
 ## `pivot_longer()`
+
+- Now we can plot each gene by timepoint and treatment
+    + Faceting by gene
 
 ```{r}
 pcr |>
@@ -717,11 +720,17 @@ pcr |>
 
 ## `pivot_wider()`
 
+- The reverse operation is `pivot_wider()`
+- Care is needed with irrelevant columns
+    + Manually providing the `id_cols` sets the columns to 'anchor' the data
+
 ```{r}
 pcr |>
   mutate(dCt = SLAM - GAPDH) |>
-  dplyr::select(treat, timepoint, rep, dCt) |>
-  pivot_wider(names_from = "rep", values_from = "dCt", names_prefix = "rep")
+  pivot_wider(
+    names_from = "rep", values_from = "dCt", 
+    id_cols = starts_with("t"), names_prefix = "rep"
+  )
 ```
 
 
@@ -745,42 +754,15 @@ pcr |>
 
 ::: {.column}
 
-::: {.fragment}
-
-
 
 ```{r}
-p <- summ_df |>
-  mutate(
-    gender_int = as.numeric(gender),
-    x_bar = case_when(
-      method == "car" ~ gender_int - 0.225,
-      method == "bike" ~ gender_int + 0.225
-    ),
-    stat = stat |>
-      str_replace("height", "Height (cm)") |>
-      str_replace("weight", "Weight (kg)")
-  ) |>
-  ggplot(aes(gender, mn, fill = method)) +
-  geom_col(position = "dodge") +
-  geom_errorbar(
-    aes(
-      x = x_bar,
-      ymin = mn - sd, ymax = mn + sd
-    ),
-    width = 0.2
-  )  +
-  facet_wrap(~stat, scales = "free_y") +
-  xlab("Gender") +
-  scale_fill_brewer(
-    palette = "Set2", name = "Method"
-  ) +
-  scale_y_continuous(
-    expand = expansion(c(0, 0.05)), name = c()
-  ) 
+p <- pcr |>
+  mutate(dCt = SLAM - GAPDH) |>
+  ggplot(aes(treat, dCt, fill = treat)) +
+  geom_boxplot() +
+  facet_wrap(~timepoint)
 ```
 
-:::
 
 :::
 
@@ -793,8 +775,11 @@ p <- summ_df |>
 
 - If we try to add a title, it's aligned left
 
-```{r weight-height-left-title}
-p + ggtitle("Weight and Height Across Participants")
+```{r p-left-title}
+#| output-location: column-fragment
+#| fig-width: 5.5
+#| fig-height: 5
+p + ggtitle("Ct values normalised to GAPDH")
 ```
 
 ## Using Themes
@@ -819,12 +804,12 @@ p + ggtitle("Weight and Height Across Participants")
 - `hjust` controls the horizontal adjustment
 + `hjust = 0.5` is centre-aligned
 
-```{r weight-height-centre-title}
+```{r p-centre-title}
 #| output-location: column-fragment
 #| fig-width: 5.5
 #| fig-height: 5
 p + 
-  ggtitle("Weight and Height Across Participants") +
+  ggtitle("Ct values normalised to GAPDH") +
   theme(plot.title = element_text(hjust = 0.5))
 ```
 
@@ -836,12 +821,12 @@ p +
 
 - We can resize all primary text
 
-```{r weight-height-large-text}
+```{r p-large-text}
 #| output-location: column-fragment
 #| fig-width: 5.5
 #| fig-height: 5
 p + 
-  ggtitle("Weight and Height Across Participants") +
+  ggtitle("Ct values normalised to GAPDH") +
   theme(
     text = element_text(size = 14),
     plot.title = element_text(hjust = 0.5)
@@ -857,12 +842,12 @@ p +
 - Control legend position
 + Doesn't need an `element_*()` function
 
-```{r weight-height-legend-bottom}
+```{r p-legend-bottom}
 #| output-location: column-fragment
 #| fig-width: 5.5
 #| fig-height: 5
 p + 
-  ggtitle("Weight and Height Across Participants") +
+  ggtitle("Ct values normalised to GAPDH") +
   theme(
     text = element_text(size = 14),
     plot.title = element_text(hjust = 0.5),
@@ -878,12 +863,12 @@ p +
 
 - Hide the background grid & rotates x-axis text
 
-```{r weight-height-no-grid}
+```{r p-no-grid}
 #| output-location: column-fragment
 #| fig-width: 5.5
 #| fig-height: 5
 p + 
-  ggtitle("Weight and Height Across Participants") +
+  ggtitle("Ct values normalised to GAPDH") +
   theme(
     text = element_text(size = 14),
     plot.title = element_text(hjust = 0.5),
@@ -928,11 +913,11 @@ p +
 . . .
 
 - We saved four objects
-+ `cols`, `transport`, `summ_df`, `p`
-+ The last two were only to fit the code on slides
++ `transport`, `cols`, `pcr` and `p`
++ The last was only to fit the code on slides
 
 . . .    
 
 - This keeps a clean workspace
-+ No need for `transport`, `transport1`, `transport1_mod` etc
++ No need for `pcr`, `pcr1`, `pcr_mod` etc
 + Very beneficial for reproducibility
