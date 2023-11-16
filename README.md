@@ -33,8 +33,8 @@ All data for the session is available [here](data.zip).
 
 ## Wednesday November 22nd
 
-|              | Topic                              | Notes                                     | Estimated Duration |
-|:-------------|:-----------------------------------|:------------------------------------------|-------------------:|
-| 9:00 - 11:00 | Working With Spreadsheet-like Data | [Tidying Data Frames](spreadsheet.html)   |              70min |
-|              | Advanced plotting                  | [Advanced Plotting](advanced_ggplot.html) |              60min |
-| 11:00 - 1:00 | RMarkdown                          | [RMarkdowng](rmarkdown.html)              |              60min |
+|               | Topic                              | Notes                                     | Estimated Duration |
+|:--------------|:-----------------------------------|:------------------------------------------|-------------------:|
+| 9:00 - 11:00  | Working With Spreadsheet-like Data | [Tidying Data Frames](spreadsheet.html)   |              70min |
+|               | Advanced plotting                  | [Advanced Plotting](advanced_ggplot.html) |              60min |
+| 11:00 - 13:00 | RMarkdown                          | [RMarkdown](rmarkdown.html)               |              60min |

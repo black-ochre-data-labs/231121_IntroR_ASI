@@ -49,4 +49,4 @@ All data for the session is available [here](data.zip).
 |:--- |:----- |:----- | ------------------:|
 | 9:00 - 11:00 | Working With Spreadsheet-like Data | [Tidying Data Frames](spreadsheet.html)      | `r getTiming("spreadsheet_slides.qmd", 1.5, -1)`   |
 |  | Advanced plotting | [Advanced Plotting](advanced_ggplot.html)      | `r getTiming("advanced_ggplot_slides.qmd", 1.5, -1)`   |
-| 11:00 - 1:00 | RMarkdown | [RMarkdowng](rmarkdown.html)      | `r getTiming("rmarkdown_slides.qmd", 1.5, -1)`   |
+| 11:00 - 13:00 | RMarkdown | [RMarkdown](rmarkdown.html)      | `r getTiming("rmarkdown_slides.qmd", 1.5, -1)`   |
