@@ -36,10 +36,10 @@ All data for the session is available [here](data.zip).
 |:--- |:----- |:----- | ------------------:|
 | 8:30 - 9:00   | Installation Help Session | [Installation](installation.html) | 30min |
 | 9:00 - 10:30  | General Introduction     | [Introduction](intro.html)      | `r getTiming("intro_slides.qmd", 0.75)`   |
-|               | RStudio & R Scripts      | [RStudio](rstudio.html)         | `r getTiming("rstudio_slides.qmd", 1, -1)` |
-|               | Bringing Data Into R     | [Data Import](data_import.html) | `r getTiming("import_slides.qmd", 1.5, -1)` |
+|               | RStudio <br>R Scripts      | [RStudio](rstudio.html)         | `r getTiming("rstudio_slides.qmd", 1, -1)` |
+|               | Loading Data Into R<br>Data Frames | [Data Import](data_import.html) | `r getTiming("import_slides.qmd", 1.5, -1)` |
 | 10:30 - 11:00 | Morning Tea Break       |                                 | 30min |
-| 11:00 - 13:00 | Bringing Data Into R (cont.) |  | 15min |
+| 11:00 - 13:00 | Loading Data Into R (cont.) |  | 15min |
 |               | Simple Visualisations | [Introduction to `ggplot2`](basic_ggplot2.html) | `r getTiming("import_slides.qmd", 1.5, -1)` |
 |               | Working With Text     | [Working With Text](text.html) | `r getTiming("text_slides.qmd", 1.5, -1)` |
 

@@ -496,6 +496,7 @@ Dr Stevie Pederson
 <ul>
 <li><code>RStudio</code> will always open in a directory somewhere</li>
 <li>Look in the <code>Files</code> pane (bottom-right) to see where it’s looking</li>
+<li>This is also the working directory for <code>R</code></li>
 </ul></li>
 </ol>
 </div>
@@ -562,7 +563,7 @@ Dr Stevie Pederson
 <li>We can add comments to our code</li>
 <li>Comments start with the <code>#</code> symbol</li>
 </ul></li>
-<li>We’ll return here later</li>
+<li>We’ll return here later <span class="fragment fade-in"><span class="math inline">\(\implies\)</span> but first a quick tour</span></li>
 </ul>
 </section>
 <section id="the-r-console" class="slide level2">
@@ -629,18 +630,18 @@ Dr Stevie Pederson
 <div class="cell" data-layout-align="center">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>x <span class="ot">&lt;-</span> <span class="dv">5</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
+<div class="fragment">
 <p><em><strong>Where have we created the object <code>x</code>?</strong></em></p>
 <ul>
 <li>Is it on your hard drive somewhere?</li>
 <li>Is it in a file somewhere?</li>
 </ul>
+</div>
 <div class="fragment">
 <ul>
 <li>We have placed <code>x</code> in our <code>R Workspace</code></li>
 <li>Formally known as your <code>Global Environment</code></li>
 </ul>
-</div>
-<div class="fragment">
 <p><img data-src="assets/EnvironmentTab.png"></p>
 </div>
 </section>
@@ -663,7 +664,7 @@ Dr Stevie Pederson
 <li>Keeps a record of the last ~200 lines of code
 <ul>
 <li>Very useful for remembering steps during exploration</li>
-<li>Best practice is to enter + execute code from the Script Windows</li>
+<li>Best practice is to enter + execute code from the Script Window</li>
 </ul></li>
 </ul>
 <div class="fragment">
@@ -913,7 +914,7 @@ Dr Stevie Pederson
 <div class="fragment">
 <p>Add the following to your script</p>
 <div class="cell" data-layout-align="center">
-<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Which values of x are greater than one?</span></span>
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Are any values of x are greater than one?</span></span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>x <span class="sc">&gt;</span> <span class="dv">1</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] FALSE  TRUE  TRUE  TRUE  TRUE</code></pre>

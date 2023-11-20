@@ -113,6 +113,7 @@ knitr:
 2. Now open `RStudio`
     + `RStudio` will always open in a directory somewhere
     + Look in the `Files` pane (bottom-right) to see where it's looking
+    + This is also the working directory for `R`
 
 . . . 
 
@@ -168,7 +169,7 @@ knitr::include_graphics("assets/RStudio.png")
     - We can keep a record of __everything__ we've done
     - We can add comments to our code
     - Comments start with the `#` symbol
-- We'll return here later
+- We'll return here later [$\implies$ but first a quick tour]{.fragment .fade-in}
 
 ## The R Console
 
@@ -219,6 +220,7 @@ In the R Console type:
 x <- 5
 ```
 
+. . .
 
 *__Where have we created the object `x`?__*
 
@@ -229,8 +231,6 @@ x <- 5
 
 - We have placed `x` in our `R Workspace`
 - Formally known as your `Global Environment`
-
-. . .
 
 ![](assets/EnvironmentTab.png)
 
@@ -248,7 +248,7 @@ x <- 5
 - Next to the Environment Tab is the **History** Tab
 - Keeps a record of the last ~200 lines of code
     + Very useful for remembering steps during exploration
-    + Best practice is to enter + execute code from the Script Windows
+    + Best practice is to enter + execute code from the Script Window
     
 . . .
 
@@ -434,7 +434,7 @@ The output of the function was simply printed to the console
 Add the following to your script 
 
 ```{r}
-# Which values of x are greater than one?
+# Are any values of x are greater than one?
 x > 1
 ```
 

@@ -92,7 +92,7 @@ knitr:
 ## Other Common Excel Issues
 
 1. Excel thinks everything is a date:
-    + Septin genes are now officialy named*SEPTIN2* etc (not *SEPT2*)
+    + Septin genes are now officially named *SEPTIN2* etc (not *SEPT2*)
     + Fractions are also not dates...
 2. Excel will remove leading zeroes (e.g. phone numbers, catalog ids)
 3. No record of any steps we've performed by clicking on something
